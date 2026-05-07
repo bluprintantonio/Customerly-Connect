@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useGetSettings, useUpdateSettings } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Save, Phone, Webhook, Eye, EyeOff, ExternalLink, MessageCircle } from "lucide-react";
+import { Save, Phone, Webhook, Eye, EyeOff, ExternalLink, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +18,7 @@ export default function SettingsPage() {
   const [twilioToNumber, setTwilioToNumber] = useState("");
   const [twilioChannel, setTwilioChannel] = useState<"sms" | "whatsapp">("whatsapp");
   const [showToken, setShowToken] = useState(false);
+  const [showWebhookDocs, setShowWebhookDocs] = useState(false);
 
   useEffect(() => {
     if (!settings) return;
@@ -72,18 +73,28 @@ export default function SettingsPage() {
       </div>
 
       {/* Webhook info section */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Webhook className="h-5 w-5 text-primary" />
-          <h2 className="text-base font-semibold">Webhook (for AI agents)</h2>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-4 space-y-3 text-sm text-muted-foreground">
-          <p>
-            Set a <strong className="text-foreground">Webhook URL</strong> on each widget (in the Widgets page) to receive a POST request whenever a visitor sends a message. Your AI can then call back to reply.
-          </p>
-          <div className="bg-muted rounded-lg p-3 font-mono text-xs space-y-2">
-            <p className="text-foreground font-semibold">Webhook payload (JSON):</p>
-            <pre className="whitespace-pre-wrap text-muted-foreground">{`{
+      <section className="space-y-3">
+        <button
+          type="button"
+          onClick={() => setShowWebhookDocs(!showWebhookDocs)}
+          className="w-full flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm hover:bg-muted/50 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Webhook className="h-4 w-4 text-muted-foreground" />
+            <span className="font-medium">Webhook — connect an AI agent</span>
+            <span className="text-xs text-muted-foreground bg-muted rounded-full px-2 py-0.5">for developers</span>
+          </div>
+          {showWebhookDocs ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+        </button>
+
+        {showWebhookDocs && (
+          <div className="rounded-xl border border-border bg-card p-4 space-y-3 text-sm text-muted-foreground">
+            <p>
+              Set a <strong className="text-foreground">Webhook URL</strong> on each widget (in the Widgets page) to receive a POST whenever a visitor sends a message. Your AI reads it and calls back to reply.
+            </p>
+            <div className="bg-muted rounded-lg p-3 font-mono text-xs space-y-2">
+              <p className="text-foreground font-semibold">Webhook payload (JSON):</p>
+              <pre className="whitespace-pre-wrap text-muted-foreground">{`{
   "event": "new_message",
   "conversationId": 42,
   "visitorName": "Maria",
@@ -96,18 +107,19 @@ export default function SettingsPage() {
     "createdAt": "2026-05-07T14:00:00Z"
   }
 }`}</pre>
-          </div>
-          <div className="bg-muted rounded-lg p-3 font-mono text-xs space-y-2">
-            <p className="text-foreground font-semibold">To send a reply from your AI (POST):</p>
-            <pre className="whitespace-pre-wrap text-muted-foreground">{`POST /api/conversations/{conversationId}/messages
+            </div>
+            <div className="bg-muted rounded-lg p-3 font-mono text-xs space-y-2">
+              <p className="text-foreground font-semibold">To reply from your AI (POST):</p>
+              <pre className="whitespace-pre-wrap text-muted-foreground">{`POST /api/conversations/{conversationId}/messages
 Content-Type: application/json
 
 { "content": "Hello! How can I help?" }`}</pre>
+            </div>
+            <p>
+              Requests include an <code className="text-foreground">x-simplechat-signature</code> header (HMAC-SHA256) when you set a webhook secret on the widget.
+            </p>
           </div>
-          <p>
-            The webhook request includes an <code className="text-foreground">x-simplechat-signature</code> header (HMAC-SHA256) when you set a webhook secret — use it to verify the request is genuine.
-          </p>
-        </div>
+        )}
       </section>
 
       {/* Twilio section */}
