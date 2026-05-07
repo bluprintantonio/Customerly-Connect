@@ -1,16 +1,17 @@
 import { getSetting } from "../routes/settings";
 
 export async function getTwilioSettings() {
-  const [accountSid, authToken, fromNumber, toNumber] = await Promise.all([
+  const [accountSid, authToken, fromNumber, toNumber, channel] = await Promise.all([
     getSetting("twilioAccountSid"),
     getSetting("twilioAuthToken"),
     getSetting("twilioFromNumber"),
     getSetting("twilioToNumber"),
+    getSetting("twilioChannel"),
   ]);
-  return { accountSid, authToken, fromNumber, toNumber };
+  return { accountSid, authToken, fromNumber, toNumber, channel: channel ?? "sms" };
 }
 
-export async function sendSms(to: string, from: string, body: string, accountSid: string, authToken: string): Promise<void> {
+export async function sendMessage(to: string, from: string, body: string, accountSid: string, authToken: string): Promise<void> {
   const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
   const params = new URLSearchParams({ To: to, From: from, Body: body });
   const creds = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
@@ -35,9 +36,14 @@ export async function notifyViaTwilio(
   visitorName: string,
   messageContent: string
 ): Promise<void> {
-  const { accountSid, authToken, fromNumber, toNumber } = await getTwilioSettings();
+  const { accountSid, authToken, fromNumber, toNumber, channel } = await getTwilioSettings();
   if (!accountSid || !authToken || !fromNumber || !toNumber) return;
 
-  const text = `[SimpleChat] New message from ${visitorName}:\n"${messageContent}"\n\nReply to this SMS to respond. Start your reply with #${conversationId}:`;
-  await sendSms(toNumber, fromNumber, text, accountSid, authToken);
+  const isWhatsApp = channel === "whatsapp";
+  const to = isWhatsApp ? `whatsapp:${toNumber}` : toNumber;
+  const from = isWhatsApp ? `whatsapp:${fromNumber}` : fromNumber;
+  const channelLabel = isWhatsApp ? "WhatsApp" : "SMS";
+
+  const text = `[SimpleChat] New message from ${visitorName}:\n"${messageContent}"\n\nReply to this ${channelLabel} to respond. Start your reply with #${conversationId}:`;
+  await sendMessage(to, from, text, accountSid, authToken);
 }

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useGetSettings, useUpdateSettings } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Save, Phone, Webhook, Eye, EyeOff, ExternalLink } from "lucide-react";
+import { Save, Phone, Webhook, Eye, EyeOff, ExternalLink, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 
 export default function SettingsPage() {
   const { toast } = useToast();
@@ -17,6 +16,7 @@ export default function SettingsPage() {
   const [twilioAuthToken, setTwilioAuthToken] = useState("");
   const [twilioFromNumber, setTwilioFromNumber] = useState("");
   const [twilioToNumber, setTwilioToNumber] = useState("");
+  const [twilioChannel, setTwilioChannel] = useState<"sms" | "whatsapp">("whatsapp");
   const [showToken, setShowToken] = useState(false);
 
   useEffect(() => {
@@ -25,6 +25,7 @@ export default function SettingsPage() {
     setTwilioAuthToken(settings["twilioAuthToken"] ?? "");
     setTwilioFromNumber(settings["twilioFromNumber"] ?? "");
     setTwilioToNumber(settings["twilioToNumber"] ?? "");
+    setTwilioChannel((settings["twilioChannel"] as "sms" | "whatsapp") ?? "whatsapp");
   }, [settings]);
 
   const updateMutation = useUpdateSettings({
@@ -40,7 +41,9 @@ export default function SettingsPage() {
   });
 
   const handleSave = () => {
-    const data: Record<string, string> = {};
+    const data: Record<string, string> = {
+      twilioChannel,
+    };
     if (twilioAccountSid) data["twilioAccountSid"] = twilioAccountSid;
     if (twilioAuthToken) data["twilioAuthToken"] = twilioAuthToken;
     if (twilioFromNumber) data["twilioFromNumber"] = twilioFromNumber;
@@ -59,6 +62,7 @@ export default function SettingsPage() {
   }
 
   const inboundWebhookUrl = `${window.location.origin}/api/twilio/inbound`;
+  const sandboxNumber = "+14155238886";
 
   return (
     <div className="p-4 sm:p-6 max-w-2xl mx-auto space-y-8">
@@ -112,10 +116,92 @@ Content-Type: application/json
           <Phone className="h-5 w-5 text-primary" />
           <h2 className="text-base font-semibold">WhatsApp / SMS via Twilio</h2>
         </div>
-        <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-4 space-y-5">
           <p className="text-sm text-muted-foreground">
-            When a visitor sends a message, you'll receive an SMS or WhatsApp message on your phone. Reply starting with <code className="text-foreground">#ID:</code> (e.g. <code className="text-foreground">#42: Yes, I can help!</code>) and it goes straight to the visitor.
+            When a visitor sends a message, you'll get notified on your phone. Reply starting with <code className="text-foreground">#ID:</code> (e.g. <code className="text-foreground">#42: Yes, I can help!</code>) and it goes straight to the visitor.
           </p>
+
+          {/* Channel selector */}
+          <div className="space-y-2">
+            <Label>Channel</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setTwilioChannel("whatsapp")}
+                className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-sm font-medium transition-all ${
+                  twilioChannel === "whatsapp"
+                    ? "border-primary bg-primary/5 text-primary"
+                    : "border-border text-muted-foreground hover:border-primary/40"
+                }`}
+              >
+                <MessageCircle className="h-4 w-4" />
+                WhatsApp
+              </button>
+              <button
+                type="button"
+                onClick={() => setTwilioChannel("sms")}
+                className={`flex items-center justify-center gap-2 rounded-xl border p-3 text-sm font-medium transition-all ${
+                  twilioChannel === "sms"
+                    ? "border-primary bg-primary/5 text-primary"
+                    : "border-border text-muted-foreground hover:border-primary/40"
+                }`}
+              >
+                <Phone className="h-4 w-4" />
+                SMS
+              </button>
+            </div>
+          </div>
+
+          {/* WhatsApp sandbox instructions */}
+          {twilioChannel === "whatsapp" && (
+            <div className="rounded-lg bg-green-50 border border-green-200 p-4 space-y-2 text-sm dark:bg-green-950/20 dark:border-green-900">
+              <p className="font-semibold text-green-800 dark:text-green-400 flex items-center gap-1.5">
+                <MessageCircle className="h-4 w-4" />
+                WhatsApp Sandbox setup (works on Twilio trial)
+              </p>
+              <ol className="list-decimal list-inside space-y-1.5 text-green-700 dark:text-green-500">
+                <li>In Twilio Console, go to <strong>Messaging → Try it out → Send a WhatsApp message</strong></li>
+                <li>
+                  On your phone, send the join keyword shown there to{" "}
+                  <strong>{sandboxNumber}</strong> on WhatsApp
+                </li>
+                <li>Use <strong>{sandboxNumber}</strong> as your "From" number below</li>
+                <li>
+                  Set the sandbox inbound webhook URL to:
+                  <div className="flex items-center gap-2 mt-1">
+                    <code className="flex-1 bg-white dark:bg-black/30 rounded px-2 py-1 text-xs text-green-900 dark:text-green-300 break-all border border-green-200 dark:border-green-800">
+                      {inboundWebhookUrl}
+                    </code>
+                    <button
+                      type="button"
+                      onClick={() => { navigator.clipboard.writeText(inboundWebhookUrl); toast({ title: "Copied!" }); }}
+                      className="shrink-0 text-green-700 hover:underline text-xs dark:text-green-400"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </li>
+              </ol>
+            </div>
+          )}
+
+          {twilioChannel === "sms" && (
+            <div className="rounded-lg bg-muted p-3 text-xs space-y-1">
+              <p className="font-semibold text-foreground">Twilio inbound webhook URL</p>
+              <p className="text-muted-foreground">In Twilio Console → Phone Numbers → your number → Messaging webhooks:</p>
+              <div className="flex items-center gap-2 mt-1">
+                <code className="flex-1 bg-background rounded px-2 py-1 text-foreground break-all">{inboundWebhookUrl}</code>
+                <button
+                  type="button"
+                  onClick={() => { navigator.clipboard.writeText(inboundWebhookUrl); toast({ title: "Copied!" }); }}
+                  className="shrink-0 text-primary hover:underline text-xs"
+                >
+                  Copy
+                </button>
+              </div>
+              <p className="text-muted-foreground mt-2">Note: Twilio trial accounts can only send SMS to verified phone numbers.</p>
+            </div>
+          )}
 
           <div className="space-y-3">
             <div className="space-y-1.5">
@@ -149,12 +235,14 @@ Content-Type: application/json
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="fromNumber">Twilio From Number</Label>
+                <Label htmlFor="fromNumber">
+                  {twilioChannel === "whatsapp" ? "Sandbox Number" : "Twilio From Number"}
+                </Label>
                 <Input
                   id="fromNumber"
                   value={twilioFromNumber}
                   onChange={(e) => setTwilioFromNumber(e.target.value)}
-                  placeholder="+15551234567"
+                  placeholder={twilioChannel === "whatsapp" ? sandboxNumber : "+15551234567"}
                 />
               </div>
               <div className="space-y-1.5">
@@ -169,28 +257,13 @@ Content-Type: application/json
             </div>
           </div>
 
-          <div className="rounded-lg bg-muted p-3 text-xs space-y-1">
-            <p className="font-semibold text-foreground">Twilio inbound webhook URL</p>
-            <p className="text-muted-foreground">Paste this into your Twilio console under Messaging → Phone Numbers → Webhooks:</p>
-            <div className="flex items-center gap-2 mt-1">
-              <code className="flex-1 bg-background rounded px-2 py-1 text-foreground break-all">{inboundWebhookUrl}</code>
-              <button
-                type="button"
-                onClick={() => { navigator.clipboard.writeText(inboundWebhookUrl); toast({ title: "Copied!" }); }}
-                className="shrink-0 text-primary hover:underline text-xs"
-              >
-                Copy
-              </button>
-            </div>
-          </div>
-
           <a
-            href="https://console.twilio.com"
+            href="https://console.twilio.com/us1/develop/sms/try-it-out/whatsapp-learn"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
           >
-            Open Twilio Console <ExternalLink className="h-3 w-3" />
+            Open WhatsApp Sandbox in Twilio <ExternalLink className="h-3 w-3" />
           </a>
         </div>
       </section>
