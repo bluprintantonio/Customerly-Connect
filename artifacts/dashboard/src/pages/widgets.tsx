@@ -50,9 +50,11 @@ export default function Widgets() {
     createMutation.mutate({ data: { name: newName, siteUrl: newSiteUrl } });
   };
 
+  const getApiDomain = () => import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
+
   const copyEmbedCode = (apiKey: string) => {
-    const domain = import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
-    const code = `<script src="${domain}/api/widget.js" data-widget-key="${apiKey}"></script>`;
+    const domain = getApiDomain();
+    const code = `<script src="${domain}/api/widget.js" data-widget-key="${apiKey}" data-api-url="${domain}/api"></script>`;
     navigator.clipboard.writeText(code);
     toast({ title: "Embed code copied to clipboard!" });
   };
@@ -176,7 +178,7 @@ export default function Widgets() {
                   <div className="relative">
                     <pre className="bg-secondary/50 text-secondary-foreground p-4 rounded-xl text-[11px] sm:text-xs overflow-x-auto border border-border/50 font-mono whitespace-pre-wrap word-break-all">
                       <code>
-{`<script src="${import.meta.env.VITE_PUBLIC_API_URL || window.location.origin}/api/widget.js" data-widget-key="${widget.apiKey}"></script>`}
+{`<script src="${import.meta.env.VITE_PUBLIC_API_URL || window.location.origin}/api/widget.js" data-widget-key="${widget.apiKey}" data-api-url="${import.meta.env.VITE_PUBLIC_API_URL || window.location.origin}/api"></script>`}
                       </code>
                     </pre>
                   </div>

@@ -19,7 +19,18 @@ router.get("/widget.js", (_req, res): void => {
   var accentRaw = config.getAttribute('data-color') || '#1a56db';
   var agentName = config.getAttribute('data-agent-name') || 'Support';
   var greeting  = config.getAttribute('data-greeting') || 'Hi there! How can we help you today?';
-  var apiBase   = config.src.replace('/api/widget.js', '/api');
+
+  // Prefer explicit data-api-url attribute, then derive from script src
+  var explicitApiUrl = config.getAttribute('data-api-url');
+  var apiBase;
+  if (explicitApiUrl) {
+    apiBase = explicitApiUrl.replace(/\\/$/, '');
+  } else if (config.src) {
+    apiBase = config.src.replace('/api/widget.js', '/api');
+  } else {
+    console.warn('[SimpleChat] Could not determine API URL. Add data-api-url attribute to the script tag.');
+    return;
+  }
 
   if (!apiKey) { console.warn('[SimpleChat] Missing data-widget-key'); return; }
 
