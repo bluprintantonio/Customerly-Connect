@@ -69,16 +69,8 @@ router.get("/widget.js", (_req, res): void => {
     #sc-bubble:active { transform: scale(.96); }
     #sc-bubble svg { width: 26px; height: 26px; transition: opacity .15s, transform .15s; }
     .az-chat-logo {
-      color: white;
-      font-weight: 700;
-      font-size: 22px;
-      letter-spacing: -1px;
-      font-family: Inter, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
+      width: 26px;
+      height: 26px;
       transition: opacity .15s, transform .15s;
     }
     #sc-bubble .sc-ico-close {
@@ -284,7 +276,7 @@ router.get("/widget.js", (_req, res): void => {
   bubble.id = 'sc-bubble';
   bubble.setAttribute('aria-label', 'Open chat');
   bubble.innerHTML = \`
-    <div class="az-chat-logo">AZ</div>
+    <svg class="az-chat-logo" viewBox="0 0 24 24" fill="white"><path d="M5 14 L9 7 L13 12 L19 8 L15 15 L11 10 Z"/></svg>
     <svg class="sc-ico-close" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     <div id="sc-badge"></div>
   \`;
