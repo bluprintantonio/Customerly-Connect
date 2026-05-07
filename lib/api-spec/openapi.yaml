@@ -3,13 +3,21 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: SimpleChat API - WordPress widget messenger
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: conversations
+    description: Conversation management
+  - name: messages
+    description: Message operations
+  - name: widgets
+    description: Widget configuration
+  - name: widget-public
+    description: Public widget endpoints (used by WordPress embed)
 paths:
   /healthz:
     get:
@@ -24,6 +32,255 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /conversations:
+    get:
+      operationId: listConversations
+      tags: [conversations]
+      summary: List all conversations
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [open, closed, all]
+            default: all
+      responses:
+        "200":
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+
+  /conversations/stats:
+    get:
+      operationId: getConversationStats
+      tags: [conversations]
+      summary: Get conversation stats
+      responses:
+        "200":
+          description: Stats summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationStats"
+
+  /conversations/{id}:
+    get:
+      operationId: getConversation
+      tags: [conversations]
+      summary: Get conversation with messages
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Conversation with messages
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateConversation
+      tags: [conversations]
+      summary: Update conversation (status)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateConversationBody"
+      responses:
+        "200":
+          description: Updated conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /conversations/{id}/messages:
+    post:
+      operationId: sendAgentMessage
+      tags: [messages]
+      summary: Agent sends a message in a conversation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageBody"
+      responses:
+        "201":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /widgets:
+    get:
+      operationId: listWidgets
+      tags: [widgets]
+      summary: List all widgets
+      responses:
+        "200":
+          description: List of widgets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Widget"
+    post:
+      operationId: createWidget
+      tags: [widgets]
+      summary: Create a new widget
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWidgetBody"
+      responses:
+        "201":
+          description: Widget created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Widget"
+
+  /widgets/{id}:
+    delete:
+      operationId: deleteWidget
+      tags: [widgets]
+      summary: Delete a widget
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /widget/conversations:
+    post:
+      operationId: widgetStartConversation
+      tags: [widget-public]
+      summary: Visitor starts a new conversation (public widget endpoint)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WidgetStartConversationBody"
+      responses:
+        "201":
+          description: Conversation started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WidgetConversationCreated"
+
+  /widget/conversations/{id}/messages:
+    get:
+      operationId: widgetGetMessages
+      tags: [widget-public]
+      summary: Visitor polls for messages (public widget endpoint)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: since
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+    post:
+      operationId: widgetSendMessage
+      tags: [widget-public]
+      summary: Visitor sends a message (public widget endpoint)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageBody"
+      responses:
+        "201":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +291,197 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: integer
+        visitorName:
+          type: string
+        visitorEmail:
+          type: ["string", "null"]
+        siteUrl:
+          type: string
+        status:
+          type: string
+          enum: [open, closed]
+        lastMessageAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        unread:
+          type: boolean
+      required:
+        - id
+        - visitorName
+        - visitorEmail
+        - siteUrl
+        - status
+        - lastMessageAt
+        - createdAt
+        - updatedAt
+        - unread
+
+    ConversationDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        visitorName:
+          type: string
+        visitorEmail:
+          type: ["string", "null"]
+        siteUrl:
+          type: string
+        status:
+          type: string
+          enum: [open, closed]
+        lastMessageAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        unread:
+          type: boolean
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Message"
+      required:
+        - id
+        - visitorName
+        - visitorEmail
+        - siteUrl
+        - status
+        - lastMessageAt
+        - createdAt
+        - updatedAt
+        - unread
+        - messages
+
+    ConversationStats:
+      type: object
+      properties:
+        total:
+          type: integer
+        open:
+          type: integer
+        closed:
+          type: integer
+        unread:
+          type: integer
+      required:
+        - total
+        - open
+        - closed
+        - unread
+
+    UpdateConversationBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [open, closed]
+        unread:
+          type: boolean
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        conversationId:
+          type: integer
+        content:
+          type: string
+        sender:
+          type: string
+          enum: [visitor, agent]
+        createdAt:
+          type: string
+      required:
+        - id
+        - conversationId
+        - content
+        - sender
+        - createdAt
+
+    SendMessageBody:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+
+    Widget:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        siteUrl:
+          type: string
+        apiKey:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - siteUrl
+        - apiKey
+        - createdAt
+
+    CreateWidgetBody:
+      type: object
+      properties:
+        name:
+          type: string
+        siteUrl:
+          type: string
+      required:
+        - name
+        - siteUrl
+
+    WidgetStartConversationBody:
+      type: object
+      properties:
+        visitorName:
+          type: string
+        visitorEmail:
+          type: ["string", "null"]
+        siteUrl:
+          type: string
+        apiKey:
+          type: string
+        initialMessage:
+          type: string
+      required:
+        - visitorName
+        - siteUrl
+        - apiKey
+        - initialMessage
+
+    WidgetConversationCreated:
+      type: object
+      properties:
+        conversationId:
+          type: integer
+        message:
+          $ref: "#/components/schemas/Message"
+      required:
+        - conversationId
+        - message
