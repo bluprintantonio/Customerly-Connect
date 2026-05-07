@@ -13,6 +13,30 @@ import { notifyViaTwilio } from "../lib/twilio";
 
 const router: IRouter = Router();
 
+router.get("/widget/config", async (req, res): Promise<void> => {
+  const key = typeof req.query["key"] === "string" ? req.query["key"] : null;
+  if (!key) {
+    res.status(400).json({ error: "Missing key" });
+    return;
+  }
+  const [widget] = await db
+    .select({
+      agentName: widgetsTable.agentName,
+      greeting: widgetsTable.greeting,
+      color: widgetsTable.color,
+      position: widgetsTable.position,
+      lang: widgetsTable.lang,
+    })
+    .from(widgetsTable)
+    .where(eq(widgetsTable.apiKey, key));
+  if (!widget) {
+    res.status(404).json({ error: "Widget not found" });
+    return;
+  }
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.json(widget);
+});
+
 router.post("/widget/conversations", async (req, res): Promise<void> => {
   const body = WidgetStartConversationBody.safeParse(req.body);
   if (!body.success) {

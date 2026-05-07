@@ -15,13 +15,34 @@ router.get("/widget.js", (_req, res): void => {
     return s[s.length - 1];
   })();
 
-  var apiKey    = config.getAttribute('data-widget-key');
-  var accentRaw = config.getAttribute('data-color') || '#1a56db';
-  var agentName = config.getAttribute('data-agent-name') || 'Support';
-  var greeting  = config.getAttribute('data-greeting') || 'Hi there! How can we help you today?';
-  var posAttr   = config.getAttribute('data-position');
+  var apiKey = config.getAttribute('data-widget-key');
+  if (!apiKey) { console.warn('[SimpleChat] Missing data-widget-key'); return; }
+
+  // Prefer explicit data-api-url attribute, then derive from script src
+  var explicitApiUrl = config.getAttribute('data-api-url');
+  var apiBase;
+  if (explicitApiUrl) {
+    apiBase = explicitApiUrl.replace(/\\/$/, '');
+  } else if (config.src) {
+    apiBase = config.src.replace('/api/widget.js', '/api');
+  } else {
+    console.warn('[SimpleChat] Could not determine API URL. Add data-api-url attribute to the script tag.');
+    return;
+  }
+
+  // Fetch widget config from server, then init. data-* attributes act as fallbacks.
+  fetch(apiBase + '/widget/config?key=' + encodeURIComponent(apiKey))
+    .then(function(r) { return r.ok ? r.json() : {}; })
+    .catch(function() { return {}; })
+    .then(function(cfg) { init(cfg); });
+
+  function init(cfg) {
+  var accentRaw = config.getAttribute('data-color')     || cfg.color     || '#1a56db';
+  var agentName = config.getAttribute('data-agent-name')|| cfg.agentName || 'Support';
+  var greeting  = config.getAttribute('data-greeting')  || cfg.greeting  || 'Hi there! How can we help you today?';
+  var posAttr   = config.getAttribute('data-position')  || cfg.position  || 'right';
   var isLeft    = posAttr === 'left';
-  var lang      = config.getAttribute('data-lang') || 'en';
+  var lang      = config.getAttribute('data-lang')      || cfg.lang      || 'en';
 
   var translations = {
     en: {
@@ -40,20 +61,6 @@ router.get("/widget.js", (_req, res): void => {
     },
   };
   var t = translations[lang] || translations['en'];
-
-  // Prefer explicit data-api-url attribute, then derive from script src
-  var explicitApiUrl = config.getAttribute('data-api-url');
-  var apiBase;
-  if (explicitApiUrl) {
-    apiBase = explicitApiUrl.replace(/\\/$/, '');
-  } else if (config.src) {
-    apiBase = config.src.replace('/api/widget.js', '/api');
-  } else {
-    console.warn('[SimpleChat] Could not determine API URL. Add data-api-url attribute to the script tag.');
-    return;
-  }
-
-  if (!apiKey) { console.warn('[SimpleChat] Missing data-widget-key'); return; }
 
   // Derive a darker shade for gradients
   function hexToRgb(h) {
@@ -601,6 +608,7 @@ router.get("/widget.js", (_req, res): void => {
   window.SimpleChat.open   = openPanel;
   window.SimpleChat.close  = closePanel;
   window.SimpleChat.toggle = function() { isOpen ? closePanel() : openPanel(); };
+  } // end init
 })();
 `;
 
