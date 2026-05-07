@@ -5,7 +5,9 @@ const router: IRouter = Router();
 router.get("/widget.js", (_req, res): void => {
   res.setHeader("Content-Type", "application/javascript");
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Cache-Control", "public, max-age=300");
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
 
   const script = `
 (function() {
@@ -32,7 +34,9 @@ router.get("/widget.js", (_req, res): void => {
   fetch(apiBase + '/widget/config?key=' + encodeURIComponent(apiKey))
     .then(function(r) { return r.ok ? r.json() : {}; })
     .catch(function() { return {}; })
-    .then(function(cfg) { init(cfg); });
+    .then(function(cfg) {
+      try { init(cfg); } catch(e) { console.error('[SimpleChat] init error:', e); }
+    });
 
   function init(cfg) {
     var accentRaw = config.getAttribute('data-color')      || cfg.color     || '#1a56db';
