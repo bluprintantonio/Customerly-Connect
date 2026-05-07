@@ -12,6 +12,12 @@ export interface Widget {
   siteUrl: string;
   apiKey: string;
   /** @nullable */
+  agentName: string | null;
+  /** @nullable */
+  greeting: string | null;
+  /** @nullable */
+  color: string | null;
+  /** @nullable */
   webhookUrl: string | null;
   /** @nullable */
   webhookSecret: string | null;

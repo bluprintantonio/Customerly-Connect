@@ -133,9 +133,17 @@ export default function Widgets() {
     createMutation.mutate({ data: { name: newName, siteUrl: newSiteUrl } });
   };
 
-  const copyEmbedCode = (apiKey: string) => {
+  const copyEmbedCode = (widget: { apiKey: string; agentName?: string | null; greeting?: string | null; color?: string | null }) => {
     const domain = import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
-    const code = `<script src="${domain}/api/widget.js" data-widget-key="${apiKey}" data-api-url="${domain}/api"></script>`;
+    const attrs = [
+      `src="${domain}/api/widget.js"`,
+      `data-widget-key="${widget.apiKey}"`,
+      `data-api-url="${domain}/api"`,
+      widget.agentName ? `data-agent-name="${widget.agentName}"` : null,
+      widget.greeting  ? `data-greeting="${widget.greeting}"` : null,
+      widget.color     ? `data-color="${widget.color}"` : null,
+    ].filter(Boolean).join("\n  ");
+    const code = `<script\n  ${attrs}>\n</script>`;
     navigator.clipboard.writeText(code);
     toast({ title: "Embed code copied to clipboard!" });
   };
@@ -259,7 +267,18 @@ export default function Widgets() {
                   <div className="relative">
                     <pre className="bg-secondary/50 text-secondary-foreground p-4 rounded-xl text-[11px] sm:text-xs overflow-x-auto border border-border/50 font-mono whitespace-pre-wrap word-break-all">
                       <code>
-{`<script src="${import.meta.env.VITE_PUBLIC_API_URL || window.location.origin}/api/widget.js" data-widget-key="${widget.apiKey}" data-api-url="${import.meta.env.VITE_PUBLIC_API_URL || window.location.origin}/api"></script>`}
+{(() => {
+  const domain = import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
+  const attrs = [
+    `src="${domain}/api/widget.js"`,
+    `data-widget-key="${widget.apiKey}"`,
+    `data-api-url="${domain}/api"`,
+    widget.agentName ? `data-agent-name="${widget.agentName}"` : null,
+    widget.greeting  ? `data-greeting="${widget.greeting}"` : null,
+    widget.color     ? `data-color="${widget.color}"` : null,
+  ].filter(Boolean).join("\n  ");
+  return `<script\n  ${attrs}>\n</script>`;
+})()}
                       </code>
                     </pre>
                   </div>
@@ -272,7 +291,7 @@ export default function Widgets() {
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => copyEmbedCode(widget.apiKey)}
+                    onClick={() => copyEmbedCode(widget)}
                     className="rounded-lg shadow-sm"
                   >
                     <Code2 className="h-3.5 w-3.5 mr-1.5" />

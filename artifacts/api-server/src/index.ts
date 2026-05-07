@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { pool } from "@workspace/db";
 
 const rawPort = process.env["PORT"];
 
@@ -15,11 +16,27 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-app.listen(port, (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
-    process.exit(1);
-  }
+async function migrate() {
+  await pool.query(`
+    ALTER TABLE widgets
+      ADD COLUMN IF NOT EXISTS agent_name text,
+      ADD COLUMN IF NOT EXISTS greeting   text,
+      ADD COLUMN IF NOT EXISTS color      text
+  `);
+  logger.info("DB migration: widgets columns ensured");
+}
 
-  logger.info({ port }, "Server listening");
-});
+migrate()
+  .then(() => {
+    app.listen(port, (err) => {
+      if (err) {
+        logger.error({ err }, "Error listening on port");
+        process.exit(1);
+      }
+      logger.info({ port }, "Server listening");
+    });
+  })
+  .catch((err) => {
+    logger.error({ err }, "Startup migration failed");
+    process.exit(1);
+  });

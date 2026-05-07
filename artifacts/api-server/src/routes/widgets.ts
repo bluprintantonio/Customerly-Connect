@@ -52,6 +52,9 @@ router.patch("/widgets/:id", async (req, res): Promise<void> => {
 
   const updateData: Partial<typeof widgetsTable.$inferInsert> = {};
   if (body.data.name !== undefined) updateData.name = body.data.name;
+  if ("agentName" in body.data) updateData.agentName = body.data.agentName ?? null;
+  if ("greeting" in body.data) updateData.greeting = body.data.greeting ?? null;
+  if ("color" in body.data) updateData.color = body.data.color ?? null;
   if ("webhookUrl" in body.data) updateData.webhookUrl = body.data.webhookUrl ?? null;
   if ("webhookSecret" in body.data) updateData.webhookSecret = body.data.webhookSecret ?? null;
 

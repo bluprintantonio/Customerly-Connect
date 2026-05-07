@@ -524,6 +524,12 @@ components:
           type: string
         apiKey:
           type: string
+        agentName:
+          type: ["string", "null"]
+        greeting:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
         webhookUrl:
           type: ["string", "null"]
         webhookSecret:
@@ -535,6 +541,9 @@ components:
         - name
         - siteUrl
         - apiKey
+        - agentName
+        - greeting
+        - color
         - webhookUrl
         - webhookSecret
         - createdAt
@@ -574,6 +583,12 @@ components:
       properties:
         name:
           type: string
+        agentName:
+          type: ["string", "null"]
+        greeting:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
         webhookUrl:
           type: ["string", "null"]
         webhookSecret:
