@@ -1,7 +1,0 @@
-bubble.innerHTML = `
-  <div class="az-chat-logo">A</div>
-  <svg class="sc-ico-close" viewBox="0 0 24 24">
-    <path d="M18 6L6 18M6 6l12 12"/>
-  </svg>
-  <div id="sc-badge"></div>
-`;
