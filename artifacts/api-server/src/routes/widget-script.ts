@@ -39,13 +39,13 @@ router.get("/widget.js", (_req, res): void => {
     });
 
   function init(cfg) {
-    var accentRaw = config.getAttribute('data-color')      || cfg.color     || '#1a56db';
-    var agentName = config.getAttribute('data-agent-name') || cfg.agentName || 'Support';
-    var greeting  = config.getAttribute('data-greeting')   || cfg.greeting  || 'Hi there! How can we help you today?';
-    var posAttr   = config.getAttribute('data-position')   || cfg.position  || 'right';
+    var accentRaw = cfg.color     || config.getAttribute('data-color')      || '#1a56db';
+    var agentName = cfg.agentName || config.getAttribute('data-agent-name') || 'Support';
+    var greeting  = cfg.greeting  || config.getAttribute('data-greeting')   || 'Hi there! How can we help you today?';
+    var posAttr   = cfg.position  || config.getAttribute('data-position')   || 'right';
     var isLeft    = posAttr === 'left';
-    var lang      = config.getAttribute('data-lang')       || cfg.lang      || 'en';
-    var logoUrl   = config.getAttribute('data-logo-url')   || cfg.logoUrl   || '';
+    var lang      = cfg.lang      || config.getAttribute('data-lang')       || 'en';
+    var logoUrl   = cfg.logoUrl   || config.getAttribute('data-logo-url')   || '';
 
     var T = {
       en: {
