@@ -68,11 +68,21 @@ router.get("/widget.js", (_req, res): void => {
     #sc-bubble:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(\${accentRgb},.55), 0 2px 8px rgba(0,0,0,.18); }
     #sc-bubble:active { transform: scale(.96); }
     #sc-bubble svg { width: 26px; height: 26px; transition: opacity .15s, transform .15s; }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+      font-weight: normal;
+      font-style: normal;
+      font-size: 28px;
+      line-height: 1;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 32;
+    }
     .fv-chat-icon {
       color: white;
-      font-size: 28px;
-      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 32;
-      line-height: 1;
       transition: opacity .15s, transform .15s;
     }
     #sc-bubble .sc-ico-close {
