@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { MessageSquare, BarChart, Settings } from "lucide-react";
+import { MessageSquare, BarChart, Settings, Puzzle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -8,7 +8,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { href: "/", icon: MessageSquare, label: "Inbox" },
     { href: "/stats", icon: BarChart, label: "Stats" },
-    { href: "/widgets", icon: Settings, label: "Widgets" },
+    { href: "/widgets", icon: Puzzle, label: "Widgets" },
+    { href: "/settings", icon: Settings, label: "Settings" },
   ];
 
   // Hide nav on conversation details page for mobile

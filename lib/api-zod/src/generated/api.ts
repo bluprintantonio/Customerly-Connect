@@ -122,6 +122,8 @@ export const ListWidgetsResponseItem = zod.object({
   name: zod.string(),
   siteUrl: zod.string(),
   apiKey: zod.string(),
+  webhookUrl: zod.string().nullable(),
+  webhookSecret: zod.string().nullable(),
   createdAt: zod.string(),
 });
 export const ListWidgetsResponse = zod.array(ListWidgetsResponseItem);
@@ -135,11 +137,46 @@ export const CreateWidgetBody = zod.object({
 });
 
 /**
+ * @summary Update widget (webhook URL, secret)
+ */
+export const UpdateWidgetParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateWidgetBody = zod.object({
+  name: zod.string().optional(),
+  webhookUrl: zod.string().nullish(),
+  webhookSecret: zod.string().nullish(),
+});
+
+export const UpdateWidgetResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  siteUrl: zod.string(),
+  apiKey: zod.string(),
+  webhookUrl: zod.string().nullable(),
+  webhookSecret: zod.string().nullable(),
+  createdAt: zod.string(),
+});
+
+/**
  * @summary Delete a widget
  */
 export const DeleteWidgetParams = zod.object({
   id: zod.coerce.number(),
 });
+
+/**
+ * @summary Get all settings
+ */
+export const GetSettingsResponse = zod.record(zod.string(), zod.string());
+
+/**
+ * @summary Update settings
+ */
+export const UpdateSettingsBody = zod.record(zod.string(), zod.string());
+
+export const UpdateSettingsResponse = zod.record(zod.string(), zod.string());
 
 /**
  * @summary Visitor starts a new conversation (public widget endpoint)

@@ -8,6 +8,8 @@ import {
   WidgetSendMessageParams,
   WidgetSendMessageBody,
 } from "@workspace/api-zod";
+import { fireWebhook } from "../lib/webhook";
+import { notifyViaTwilio } from "../lib/twilio";
 
 const router: IRouter = Router();
 
@@ -49,6 +51,26 @@ router.post("/widget/conversations", async (req, res): Promise<void> => {
       sender: "visitor",
     })
     .returning();
+
+  // Fire webhook + Twilio notification in background (don't block the response)
+  const payload = {
+    event: "new_message",
+    conversationId: conversation.id,
+    visitorName: conversation.visitorName,
+    visitorEmail: conversation.visitorEmail,
+    siteUrl: conversation.siteUrl,
+    message: {
+      id: message.id,
+      content: message.content,
+      sender: message.sender,
+      createdAt: message.createdAt.toISOString(),
+    },
+  };
+
+  if (widget.webhookUrl) {
+    void fireWebhook(widget.webhookUrl, widget.webhookSecret, payload);
+  }
+  void notifyViaTwilio(conversation.id, conversation.visitorName, body.data.initialMessage);
 
   res.status(201).json({ conversationId: conversation.id, message });
 });
@@ -128,6 +150,31 @@ router.post("/widget/conversations/:id/messages", async (req, res): Promise<void
     .update(conversationsTable)
     .set({ lastMessageAt: new Date(), unread: true })
     .where(eq(conversationsTable.id, params.data.id));
+
+  // Look up widget for this conversation to get webhook config
+  const [widget] = await db
+    .select()
+    .from(widgetsTable)
+    .where(eq(widgetsTable.siteUrl, conversation.siteUrl));
+
+  const payload = {
+    event: "new_message",
+    conversationId: conversation.id,
+    visitorName: conversation.visitorName,
+    visitorEmail: conversation.visitorEmail,
+    siteUrl: conversation.siteUrl,
+    message: {
+      id: message.id,
+      content: message.content,
+      sender: message.sender,
+      createdAt: message.createdAt.toISOString(),
+    },
+  };
+
+  if (widget?.webhookUrl) {
+    void fireWebhook(widget.webhookUrl, widget.webhookSecret, payload);
+  }
+  void notifyViaTwilio(conversation.id, conversation.visitorName, body.data.content);
 
   res.status(201).json(message);
 });

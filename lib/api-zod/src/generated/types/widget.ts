@@ -11,5 +11,9 @@ export interface Widget {
   name: string;
   siteUrl: string;
   apiKey: string;
+  /** @nullable */
+  webhookUrl: string | null;
+  /** @nullable */
+  webhookSecret: string | null;
   createdAt: string;
 }

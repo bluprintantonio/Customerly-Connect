@@ -9,6 +9,7 @@ import Inbox from "@/pages/inbox";
 import Conversation from "@/pages/conversation";
 import Widgets from "@/pages/widgets";
 import Stats from "@/pages/stats";
+import SettingsPage from "@/pages/settings";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,9 @@ function Router() {
       </Route>
       <Route path="/widgets">
         <Layout><Widgets /></Layout>
+      </Route>
+      <Route path="/settings">
+        <Layout><SettingsPage /></Layout>
       </Route>
       <Route path="/conversations/:id">
         <Layout><Conversation /></Layout>

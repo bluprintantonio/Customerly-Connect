@@ -26,7 +26,10 @@ import type {
   ListConversationsParams,
   Message,
   SendMessageBody,
+  SettingsMap,
+  TwilioInboundBody,
   UpdateConversationBody,
+  UpdateWidgetBody,
   Widget,
   WidgetConversationCreated,
   WidgetGetMessagesParams,
@@ -711,6 +714,93 @@ export const useCreateWidget = <
 };
 
 /**
+ * @summary Update widget (webhook URL, secret)
+ */
+export const getUpdateWidgetUrl = (id: number) => {
+  return `/api/widgets/${id}`;
+};
+
+export const updateWidget = async (
+  id: number,
+  updateWidgetBody: UpdateWidgetBody,
+  options?: RequestInit,
+): Promise<Widget> => {
+  return customFetch<Widget>(getUpdateWidgetUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateWidgetBody),
+  });
+};
+
+export const getUpdateWidgetMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateWidget>>,
+    TError,
+    { id: number; data: BodyType<UpdateWidgetBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateWidget>>,
+  TError,
+  { id: number; data: BodyType<UpdateWidgetBody> },
+  TContext
+> => {
+  const mutationKey = ["updateWidget"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateWidget>>,
+    { id: number; data: BodyType<UpdateWidgetBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateWidget(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateWidgetMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateWidget>>
+>;
+export type UpdateWidgetMutationBody = BodyType<UpdateWidgetBody>;
+export type UpdateWidgetMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Update widget (webhook URL, secret)
+ */
+export const useUpdateWidget = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateWidget>>,
+    TError,
+    { id: number; data: BodyType<UpdateWidgetBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateWidget>>,
+  TError,
+  { id: number; data: BodyType<UpdateWidgetBody> },
+  TContext
+> => {
+  return useMutation(getUpdateWidgetMutationOptions(options));
+};
+
+/**
  * @summary Delete a widget
  */
 export const getDeleteWidgetUrl = (id: number) => {
@@ -792,6 +882,260 @@ export const useDeleteWidget = <
   TContext
 > => {
   return useMutation(getDeleteWidgetMutationOptions(options));
+};
+
+/**
+ * @summary Get all settings
+ */
+export const getGetSettingsUrl = () => {
+  return `/api/settings`;
+};
+
+export const getSettings = async (
+  options?: RequestInit,
+): Promise<SettingsMap> => {
+  return customFetch<SettingsMap>(getGetSettingsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetSettingsQueryKey = () => {
+  return [`/api/settings`] as const;
+};
+
+export const getGetSettingsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSettingsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSettings>>> = ({
+    signal,
+  }) => getSettings({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getSettings>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetSettingsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSettings>>
+>;
+export type GetSettingsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get all settings
+ */
+
+export function useGetSettings<
+  TData = Awaited<ReturnType<typeof getSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetSettingsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update settings
+ */
+export const getUpdateSettingsUrl = () => {
+  return `/api/settings`;
+};
+
+export const updateSettings = async (
+  settingsMap: SettingsMap,
+  options?: RequestInit,
+): Promise<SettingsMap> => {
+  return customFetch<SettingsMap>(getUpdateSettingsUrl(), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(settingsMap),
+  });
+};
+
+export const getUpdateSettingsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSettings>>,
+    TError,
+    { data: BodyType<SettingsMap> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateSettings>>,
+  TError,
+  { data: BodyType<SettingsMap> },
+  TContext
+> => {
+  const mutationKey = ["updateSettings"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateSettings>>,
+    { data: BodyType<SettingsMap> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updateSettings(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateSettingsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateSettings>>
+>;
+export type UpdateSettingsMutationBody = BodyType<SettingsMap>;
+export type UpdateSettingsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update settings
+ */
+export const useUpdateSettings = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSettings>>,
+    TError,
+    { data: BodyType<SettingsMap> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateSettings>>,
+  TError,
+  { data: BodyType<SettingsMap> },
+  TContext
+> => {
+  return useMutation(getUpdateSettingsMutationOptions(options));
+};
+
+/**
+ * @summary Twilio inbound SMS/WhatsApp webhook
+ */
+export const getTwilioInboundUrl = () => {
+  return `/api/twilio/inbound`;
+};
+
+export const twilioInbound = async (
+  twilioInboundBody: TwilioInboundBody,
+  options?: RequestInit,
+): Promise<string> => {
+  const formUrlEncoded = new URLSearchParams();
+  formUrlEncoded.append(`Body`, twilioInboundBody.Body);
+  formUrlEncoded.append(`From`, twilioInboundBody.From);
+
+  return customFetch<string>(getTwilioInboundUrl(), {
+    ...options,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      ...options?.headers,
+    },
+    body: formUrlEncoded,
+  });
+};
+
+export const getTwilioInboundMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof twilioInbound>>,
+    TError,
+    { data: BodyType<TwilioInboundBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof twilioInbound>>,
+  TError,
+  { data: BodyType<TwilioInboundBody> },
+  TContext
+> => {
+  const mutationKey = ["twilioInbound"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof twilioInbound>>,
+    { data: BodyType<TwilioInboundBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return twilioInbound(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type TwilioInboundMutationResult = NonNullable<
+  Awaited<ReturnType<typeof twilioInbound>>
+>;
+export type TwilioInboundMutationBody = BodyType<TwilioInboundBody>;
+export type TwilioInboundMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Twilio inbound SMS/WhatsApp webhook
+ */
+export const useTwilioInbound = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof twilioInbound>>,
+    TError,
+    { data: BodyType<TwilioInboundBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof twilioInbound>>,
+  TError,
+  { data: BodyType<TwilioInboundBody> },
+  TContext
+> => {
+  return useMutation(getTwilioInboundMutationOptions(options));
 };
 
 /**

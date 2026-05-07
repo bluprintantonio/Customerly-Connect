@@ -102,6 +102,10 @@ export interface Widget {
   name: string;
   siteUrl: string;
   apiKey: string;
+  /** @nullable */
+  webhookUrl: string | null;
+  /** @nullable */
+  webhookSecret: string | null;
   createdAt: string;
 }
 
@@ -117,6 +121,18 @@ export interface WidgetStartConversationBody {
   siteUrl: string;
   apiKey: string;
   initialMessage: string;
+}
+
+export interface UpdateWidgetBody {
+  name?: string;
+  /** @nullable */
+  webhookUrl?: string | null;
+  /** @nullable */
+  webhookSecret?: string | null;
+}
+
+export interface SettingsMap {
+  [key: string]: string;
 }
 
 export interface WidgetConversationCreated {
@@ -136,6 +152,11 @@ export const ListConversationsStatus = {
   closed: "closed",
   all: "all",
 } as const;
+
+export type TwilioInboundBody = {
+  Body: string;
+  From: string;
+};
 
 export type WidgetGetMessagesParams = {
   /**

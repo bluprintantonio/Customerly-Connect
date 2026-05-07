@@ -1,22 +1,105 @@
 import { useState } from "react";
-import { useListWidgets, useCreateWidget, useDeleteWidget, getListWidgetsQueryKey } from "@workspace/api-client-react";
+import { useListWidgets, useCreateWidget, useDeleteWidget, useUpdateWidget, getListWidgetsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Trash2, Code2, Globe } from "lucide-react";
+import { Plus, Trash2, Code2, Globe, Webhook, ChevronDown, ChevronUp, Save } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { formatRelativeTime } from "@/lib/format";
+import { cn } from "@/lib/utils";
+
+function WebhookSection({ widget }: { widget: { id: number; webhookUrl: string | null; webhookSecret: string | null } }) {
+  const [open, setOpen] = useState(false);
+  const [url, setUrl] = useState(widget.webhookUrl ?? "");
+  const [secret, setSecret] = useState(widget.webhookSecret ?? "");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const updateMutation = useUpdateWidget({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getListWidgetsQueryKey() });
+        toast({ title: "Webhook saved" });
+      },
+      onError: () => {
+        toast({ title: "Failed to save webhook", variant: "destructive" });
+      },
+    },
+  });
+
+  const handleSave = () => {
+    updateMutation.mutate({
+      id: widget.id,
+      data: {
+        webhookUrl: url || null,
+        webhookSecret: secret || null,
+      },
+    });
+  };
+
+  return (
+    <div className="border-t border-border/40 mt-4 pt-4">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors w-full"
+      >
+        <Webhook className="h-4 w-4" />
+        Webhook / AI Agent
+        {widget.webhookUrl ? (
+          <span className="ml-auto text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5">Configured</span>
+        ) : null}
+        {open ? <ChevronUp className="h-4 w-4 ml-auto" /> : <ChevronDown className={cn("h-4 w-4", widget.webhookUrl ? "" : "ml-auto")} />}
+      </button>
+
+      {open && (
+        <div className="mt-3 space-y-3">
+          <div className="space-y-1.5">
+            <Label className="text-xs">Webhook URL</Label>
+            <Input
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://your-ai.example.com/webhook"
+              className="text-xs h-9"
+            />
+            <p className="text-[11px] text-muted-foreground">
+              POST'd when a visitor sends a message. Your AI replies via <code className="text-foreground">/api/conversations/&#123;id&#125;/messages</code>.
+            </p>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Webhook Secret (optional)</Label>
+            <Input
+              value={secret}
+              onChange={(e) => setSecret(e.target.value)}
+              placeholder="A secret to sign requests (HMAC-SHA256)"
+              className="text-xs h-9"
+            />
+          </div>
+          <Button
+            size="sm"
+            onClick={handleSave}
+            disabled={updateMutation.isPending}
+            className="w-full rounded-lg"
+          >
+            <Save className="h-3.5 w-3.5 mr-1.5" />
+            {updateMutation.isPending ? "Saving…" : "Save Webhook"}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Widgets() {
   const { data: widgets, isLoading } = useListWidgets();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [isAddOpen, setIsAddOpen] = useState(false);
-  
+
   const [newName, setNewName] = useState("");
   const [newSiteUrl, setNewSiteUrl] = useState("");
 
@@ -31,8 +114,8 @@ export default function Widgets() {
       },
       onError: () => {
         toast({ title: "Failed to create widget", variant: "destructive" });
-      }
-    }
+      },
+    },
   });
 
   const deleteMutation = useDeleteWidget({
@@ -40,8 +123,8 @@ export default function Widgets() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListWidgetsQueryKey() });
         toast({ title: "Widget deleted" });
-      }
-    }
+      },
+    },
   });
 
   const handleCreate = (e: React.FormEvent) => {
@@ -50,10 +133,8 @@ export default function Widgets() {
     createMutation.mutate({ data: { name: newName, siteUrl: newSiteUrl } });
   };
 
-  const getApiDomain = () => import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
-
   const copyEmbedCode = (apiKey: string) => {
-    const domain = getApiDomain();
+    const domain = import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
     const code = `<script src="${domain}/api/widget.js" data-widget-key="${apiKey}" data-api-url="${domain}/api"></script>`;
     navigator.clipboard.writeText(code);
     toast({ title: "Embed code copied to clipboard!" });
@@ -107,8 +188,8 @@ export default function Widgets() {
                 </div>
               </div>
               <DialogFooter>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={createMutation.isPending || !newName || !newSiteUrl}
                   className="rounded-xl w-full sm:w-auto"
                 >
@@ -183,14 +264,14 @@ export default function Widgets() {
                     </pre>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between mt-auto">
                   <span className="text-xs text-muted-foreground font-medium">
                     Created {formatRelativeTime(widget.createdAt)}
                   </span>
-                  <Button 
-                    variant="secondary" 
-                    size="sm" 
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={() => copyEmbedCode(widget.apiKey)}
                     className="rounded-lg shadow-sm"
                   >
@@ -198,6 +279,8 @@ export default function Widgets() {
                     Copy Code
                   </Button>
                 </div>
+
+                <WebhookSection widget={widget} />
               </CardContent>
             </Card>
           ))

@@ -7,6 +7,8 @@ export const widgetsTable = pgTable("widgets", {
   name: text("name").notNull(),
   siteUrl: text("site_url").notNull(),
   apiKey: text("api_key").notNull(),
+  webhookUrl: text("webhook_url"),
+  webhookSecret: text("webhook_secret"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
