@@ -280,6 +280,7 @@ router.get("/widget.js", (_req, res): void => {
   var pollInterval    = null;
   var lastMessageTime = null;
   var isOpen          = false;
+  var shownMessageIds = {};
 
   function initials(name) {
     return name.split(' ').slice(0,2).map(function(w){ return w[0]||''; }).join('').toUpperCase() || '?';
@@ -434,6 +435,8 @@ router.get("/widget.js", (_req, res): void => {
   }
 
   function appendMessage(container, m, vName) {
+    if (shownMessageIds[m.id]) return;
+    shownMessageIds[m.id] = true;
     var row = document.createElement('div');
     row.className = 'sc-msg-row ' + m.sender;
 
@@ -480,13 +483,19 @@ router.get("/widget.js", (_req, res): void => {
     if (pollInterval) clearInterval(pollInterval);
     pollInterval = setInterval(function() {
       if (!conversationId) return;
-      var qs = lastMessageTime ? '?since=' + encodeURIComponent(lastMessageTime) : '';
+      // Add 1ms to lastMessageTime to avoid re-fetching the same message
+      // due to microsecond vs millisecond precision mismatch in timestamps
+      var sinceParam = lastMessageTime
+        ? new Date(new Date(lastMessageTime).getTime() + 1).toISOString()
+        : null;
+      var qs = sinceParam ? '?since=' + encodeURIComponent(sinceParam) : '';
       fetch(apiBase + '/widget/conversations/' + conversationId + '/messages' + qs)
         .then(function(r) { return r.json(); })
         .then(function(msgs) {
           if (!msgs || !msgs.length) return;
           var container = document.getElementById('sc-messages');
           msgs.forEach(function(m) {
+            if (shownMessageIds[m.id]) return;
             lastMessageTime = m.createdAt;
             if (m.sender === 'agent') {
               var badge = document.getElementById('sc-badge');
