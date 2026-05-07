@@ -125,6 +125,9 @@ export const ListWidgetsResponseItem = zod.object({
   agentName: zod.string().nullable(),
   greeting: zod.string().nullable(),
   color: zod.string().nullable(),
+  position: zod
+    .union([zod.literal("left"), zod.literal("right"), zod.literal(null)])
+    .nullable(),
   webhookUrl: zod.string().nullable(),
   webhookSecret: zod.string().nullable(),
   createdAt: zod.string(),
@@ -151,6 +154,9 @@ export const UpdateWidgetBody = zod.object({
   agentName: zod.string().nullish(),
   greeting: zod.string().nullish(),
   color: zod.string().nullish(),
+  position: zod
+    .union([zod.literal("left"), zod.literal("right"), zod.literal(null)])
+    .nullish(),
   webhookUrl: zod.string().nullish(),
   webhookSecret: zod.string().nullish(),
 });
@@ -163,6 +169,9 @@ export const UpdateWidgetResponse = zod.object({
   agentName: zod.string().nullable(),
   greeting: zod.string().nullable(),
   color: zod.string().nullable(),
+  position: zod
+    .union([zod.literal("left"), zod.literal("right"), zod.literal(null)])
+    .nullable(),
   webhookUrl: zod.string().nullable(),
   webhookSecret: zod.string().nullable(),
   createdAt: zod.string(),

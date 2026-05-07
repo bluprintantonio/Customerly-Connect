@@ -19,6 +19,8 @@ router.get("/widget.js", (_req, res): void => {
   var accentRaw = config.getAttribute('data-color') || '#1a56db';
   var agentName = config.getAttribute('data-agent-name') || 'Support';
   var greeting  = config.getAttribute('data-greeting') || 'Hi there! How can we help you today?';
+  var posAttr   = config.getAttribute('data-position');
+  var isLeft    = posAttr === 'left';
 
   // Prefer explicit data-api-url attribute, then derive from script src
   var explicitApiUrl = config.getAttribute('data-api-url');
@@ -56,7 +58,7 @@ router.get("/widget.js", (_req, res): void => {
 
     /* Bubble */
     #sc-bubble {
-      position: fixed; bottom: 24px; right: 24px; z-index: 2147483646;
+      position: fixed; bottom: 24px; \${isLeft ? 'left' : 'right'}: 24px; z-index: 2147483646;
       width: 56px; height: 56px; border-radius: 50%;
       background: linear-gradient(135deg, \${accent}, \${accentDark});
       border: none; cursor: pointer;
@@ -110,14 +112,14 @@ router.get("/widget.js", (_req, res): void => {
 
     /* Panel */
     #sc-panel {
-      position: fixed; bottom: 92px; right: 24px; z-index: 2147483645;
+      position: fixed; bottom: 92px; \${isLeft ? 'left' : 'right'}: 24px; z-index: 2147483645;
       width: 360px; height: 560px; border-radius: 20px;
       background: #fff; overflow: hidden;
       box-shadow: 0 12px 48px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.08);
       display: flex; flex-direction: column;
       transform: scale(.9) translateY(16px); opacity: 0; pointer-events: none;
       transition: transform .25s cubic-bezier(.34,1.3,.64,1), opacity .2s ease;
-      transform-origin: bottom right;
+      transform-origin: \${isLeft ? 'bottom left' : 'bottom right'};
     }
     #sc-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
 

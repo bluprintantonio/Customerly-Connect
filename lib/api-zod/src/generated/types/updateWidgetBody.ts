@@ -5,6 +5,7 @@
  * SimpleChat API - WordPress widget messenger
  * OpenAPI spec version: 0.1.0
  */
+import type { UpdateWidgetBodyPosition } from "./updateWidgetBodyPosition";
 
 export interface UpdateWidgetBody {
   name?: string;
@@ -14,6 +15,8 @@ export interface UpdateWidgetBody {
   greeting?: string | null;
   /** @nullable */
   color?: string | null;
+  /** @nullable */
+  position?: UpdateWidgetBodyPosition;
   /** @nullable */
   webhookUrl?: string | null;
   /** @nullable */

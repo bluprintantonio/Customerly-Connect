@@ -133,17 +133,21 @@ export default function Widgets() {
     createMutation.mutate({ data: { name: newName, siteUrl: newSiteUrl } });
   };
 
-  const copyEmbedCode = (widget: { apiKey: string; agentName?: string | null; greeting?: string | null; color?: string | null }) => {
+  const buildEmbedAttrs = (widget: { apiKey: string; agentName?: string | null; greeting?: string | null; color?: string | null; position?: string | null }) => {
     const domain = import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
-    const attrs = [
+    return [
       `src="${domain}/api/widget.js"`,
       `data-widget-key="${widget.apiKey}"`,
       `data-api-url="${domain}/api"`,
       widget.agentName ? `data-agent-name="${widget.agentName}"` : null,
       widget.greeting  ? `data-greeting="${widget.greeting}"` : null,
       widget.color     ? `data-color="${widget.color}"` : null,
+      widget.position  ? `data-position="${widget.position}"` : null,
     ].filter(Boolean).join("\n  ");
-    const code = `<script\n  ${attrs}>\n</script>`;
+  };
+
+  const copyEmbedCode = (widget: { apiKey: string; agentName?: string | null; greeting?: string | null; color?: string | null; position?: string | null }) => {
+    const code = `<script\n  ${buildEmbedAttrs(widget)}>\n</script>`;
     navigator.clipboard.writeText(code);
     toast({ title: "Embed code copied to clipboard!" });
   };
@@ -267,18 +271,7 @@ export default function Widgets() {
                   <div className="relative">
                     <pre className="bg-secondary/50 text-secondary-foreground p-4 rounded-xl text-[11px] sm:text-xs overflow-x-auto border border-border/50 font-mono whitespace-pre-wrap word-break-all">
                       <code>
-{(() => {
-  const domain = import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
-  const attrs = [
-    `src="${domain}/api/widget.js"`,
-    `data-widget-key="${widget.apiKey}"`,
-    `data-api-url="${domain}/api"`,
-    widget.agentName ? `data-agent-name="${widget.agentName}"` : null,
-    widget.greeting  ? `data-greeting="${widget.greeting}"` : null,
-    widget.color     ? `data-color="${widget.color}"` : null,
-  ].filter(Boolean).join("\n  ");
-  return `<script\n  ${attrs}>\n</script>`;
-})()}
+{`<script\n  ${buildEmbedAttrs(widget)}>\n</script>`}
                       </code>
                     </pre>
                   </div>

@@ -530,6 +530,9 @@ components:
           type: ["string", "null"]
         color:
           type: ["string", "null"]
+        position:
+          type: ["string", "null"]
+          enum: ["left", "right", null]
         webhookUrl:
           type: ["string", "null"]
         webhookSecret:
@@ -544,6 +547,7 @@ components:
         - agentName
         - greeting
         - color
+        - position
         - webhookUrl
         - webhookSecret
         - createdAt
@@ -589,6 +593,9 @@ components:
           type: ["string", "null"]
         color:
           type: ["string", "null"]
+        position:
+          type: ["string", "null"]
+          enum: ["left", "right", null]
         webhookUrl:
           type: ["string", "null"]
         webhookSecret:

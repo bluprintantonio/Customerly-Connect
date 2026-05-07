@@ -97,6 +97,18 @@ export interface SendMessageBody {
   content: string;
 }
 
+/**
+ * @nullable
+ */
+export type WidgetPosition =
+  | (typeof WidgetPosition)[keyof typeof WidgetPosition]
+  | null;
+
+export const WidgetPosition = {
+  left: "left",
+  right: "right",
+} as const;
+
 export interface Widget {
   id: number;
   name: string;
@@ -108,6 +120,8 @@ export interface Widget {
   greeting: string | null;
   /** @nullable */
   color: string | null;
+  /** @nullable */
+  position: WidgetPosition;
   /** @nullable */
   webhookUrl: string | null;
   /** @nullable */
@@ -129,6 +143,18 @@ export interface WidgetStartConversationBody {
   initialMessage: string;
 }
 
+/**
+ * @nullable
+ */
+export type UpdateWidgetBodyPosition =
+  | (typeof UpdateWidgetBodyPosition)[keyof typeof UpdateWidgetBodyPosition]
+  | null;
+
+export const UpdateWidgetBodyPosition = {
+  left: "left",
+  right: "right",
+} as const;
+
 export interface UpdateWidgetBody {
   name?: string;
   /** @nullable */
@@ -137,6 +163,8 @@ export interface UpdateWidgetBody {
   greeting?: string | null;
   /** @nullable */
   color?: string | null;
+  /** @nullable */
+  position?: UpdateWidgetBodyPosition;
   /** @nullable */
   webhookUrl?: string | null;
   /** @nullable */
