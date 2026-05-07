@@ -406,6 +406,14 @@ router.get("/widget.js", (_req, res): void => {
     function backBtn() {
       return \`<button class="sc-icon-btn" id="sc-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg></button>\`;
     }
+    function logoInner() {
+      if (!logoUrl) return initials(agentName);
+      return '<img src="' + logoUrl + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block">';
+    }
+    function chatAvInner() {
+      if (!logoUrl) return initials(agentName);
+      return '<img src="' + logoUrl + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block">';
+    }
 
     // ── Home screen ───────────────────────────────────────────────────────
     function showWelcome() {
@@ -413,7 +421,7 @@ router.get("/widget.js", (_req, res): void => {
       panel.innerHTML = \`
         <div id="sc-handle"></div>
         <div id="sc-topbar">
-          <div class="sc-top-logo">\${logoUrl ? '<img src="'+logoUrl+'" alt="" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">' : ''}<span style="display:\${logoUrl?'none':'flex'};align-items:center;justify-content:center;width:100%;height:100%">\${initials(agentName)}</span></div>
+          <div class="sc-top-logo">\${logoInner()}</div>
           \${closeBtn('sc-close-btn')}
         </div>
         <div id="sc-hero">
@@ -448,7 +456,7 @@ router.get("/widget.js", (_req, res): void => {
       panel.innerHTML = \`
         <div id="sc-chat-hdr">
           \${backBtn()}
-          <div class="sc-chat-av">\${logoUrl ? '<img src="'+logoUrl+'" alt="">' : initials(agentName)}</div>
+          <div class="sc-chat-av">\${chatAvInner()}</div>
           <div>
             <div class="sc-chat-name">\${agentName}</div>
             <div class="sc-chat-status"><span class="sc-dot"></span>\${t.repliesIn}</div>
@@ -491,7 +499,7 @@ router.get("/widget.js", (_req, res): void => {
       panel.innerHTML = \`
         <div id="sc-chat-hdr">
           \${backBtn()}
-          <div class="sc-chat-av">\${logoUrl ? '<img src="'+logoUrl+'" alt="">' : initials(agentName)}</div>
+          <div class="sc-chat-av">\${chatAvInner()}</div>
           <div>
             <div class="sc-chat-name">\${agentName}</div>
             <div class="sc-chat-status"><span class="sc-dot"></span>\${t.online}</div>
