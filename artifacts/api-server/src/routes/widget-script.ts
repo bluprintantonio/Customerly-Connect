@@ -21,6 +21,25 @@ router.get("/widget.js", (_req, res): void => {
   var greeting  = config.getAttribute('data-greeting') || 'Hi there! How can we help you today?';
   var posAttr   = config.getAttribute('data-position');
   var isLeft    = posAttr === 'left';
+  var lang      = config.getAttribute('data-lang') || 'en';
+
+  var translations = {
+    en: {
+      repliesIn:  'Typically replies in minutes',
+      online:     'Online',
+      welcome:    "Send us a message and we'll get back to you as soon as possible.",
+      startBtn:   'Start a conversation',
+      powered:    'Powered by SimpleChat',
+    },
+    pt: {
+      repliesIn:  'Normalmente responde em minutos',
+      online:     'Online',
+      welcome:    'Envie-nos uma mensagem e responderemos o mais breve possível.',
+      startBtn:   'Iniciar conversa',
+      powered:    '',
+    },
+  };
+  var t = translations[lang] || translations['en'];
 
   // Prefer explicit data-api-url attribute, then derive from script src
   var explicitApiUrl = config.getAttribute('data-api-url');
@@ -356,14 +375,14 @@ router.get("/widget.js", (_req, res): void => {
 
   // ── Welcome screen ────────────────────────────────────────────────────
   function showWelcome() {
-    panel.innerHTML = renderHeader('Typically replies in minutes') + \`
+    panel.innerHTML = renderHeader(t.repliesIn) + \`
       <div id="sc-card">
         <div id="sc-welcome">
-          <p>Send us a message and we'll get back to you as soon as possible.</p>
-          <button class="sc-start-btn" id="sc-start-btn">Start a conversation</button>
+          <p>\${t.welcome}</p>
+          <button class="sc-start-btn" id="sc-start-btn">\${t.startBtn}</button>
         </div>
       </div>
-      <div id="sc-powered">Powered by SimpleChat</div>
+      \${t.powered ? '<div id="sc-powered">' + t.powered + '</div>' : ''}
     \`;
     bindClose();
     document.getElementById('sc-start-btn').onclick = showForm;
@@ -371,7 +390,7 @@ router.get("/widget.js", (_req, res): void => {
 
   // ── Contact form ──────────────────────────────────────────────────────
   function showForm() {
-    panel.innerHTML = renderHeader('Typically replies in minutes') + \`
+    panel.innerHTML = renderHeader(t.repliesIn) + \`
       <div id="sc-card">
         <form id="sc-form" autocomplete="on">
           <div class="sc-field">
@@ -392,7 +411,7 @@ router.get("/widget.js", (_req, res): void => {
           </button>
         </form>
       </div>
-      <div id="sc-powered">Powered by SimpleChat</div>
+      \${t.powered ? '<div id="sc-powered">' + t.powered + '</div>' : ''}
     \`;
     bindClose();
     document.getElementById('sc-form').onsubmit = function(e) {
@@ -439,7 +458,7 @@ router.get("/widget.js", (_req, res): void => {
   // ── Thread ────────────────────────────────────────────────────────────
   function showThread(messages, visitorName) {
     var vName = visitorName || 'You';
-    panel.innerHTML = renderHeader('Online') + \`
+    panel.innerHTML = renderHeader(t.online) + \`
       <div id="sc-thread">
         <div id="sc-messages"></div>
         <div id="sc-reply-bar">
@@ -449,7 +468,7 @@ router.get("/widget.js", (_req, res): void => {
           </button>
         </div>
       </div>
-      <div id="sc-powered">Powered by SimpleChat</div>
+      \${t.powered ? '<div id="sc-powered">' + t.powered + '</div>' : ''}
     \`;
     bindClose();
 

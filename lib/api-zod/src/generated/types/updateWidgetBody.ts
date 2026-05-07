@@ -18,6 +18,8 @@ export interface UpdateWidgetBody {
   /** @nullable */
   position?: UpdateWidgetBodyPosition;
   /** @nullable */
+  lang?: string | null;
+  /** @nullable */
   webhookUrl?: string | null;
   /** @nullable */
   webhookSecret?: string | null;

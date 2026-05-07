@@ -21,6 +21,8 @@ export interface Widget {
   /** @nullable */
   position: WidgetPosition;
   /** @nullable */
+  lang: string | null;
+  /** @nullable */
   webhookUrl: string | null;
   /** @nullable */
   webhookSecret: string | null;

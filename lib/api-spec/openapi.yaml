@@ -533,6 +533,8 @@ components:
         position:
           type: ["string", "null"]
           enum: ["left", "right", null]
+        lang:
+          type: ["string", "null"]
         webhookUrl:
           type: ["string", "null"]
         webhookSecret:
@@ -548,6 +550,7 @@ components:
         - greeting
         - color
         - position
+        - lang
         - webhookUrl
         - webhookSecret
         - createdAt
@@ -596,6 +599,8 @@ components:
         position:
           type: ["string", "null"]
           enum: ["left", "right", null]
+        lang:
+          type: ["string", "null"]
         webhookUrl:
           type: ["string", "null"]
         webhookSecret:

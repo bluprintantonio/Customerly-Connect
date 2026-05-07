@@ -21,7 +21,9 @@ async function migrate() {
     ALTER TABLE widgets
       ADD COLUMN IF NOT EXISTS agent_name text,
       ADD COLUMN IF NOT EXISTS greeting   text,
-      ADD COLUMN IF NOT EXISTS color      text
+      ADD COLUMN IF NOT EXISTS color      text,
+      ADD COLUMN IF NOT EXISTS position   text,
+      ADD COLUMN IF NOT EXISTS lang       text
   `);
   logger.info("DB migration: widgets columns ensured");
 }

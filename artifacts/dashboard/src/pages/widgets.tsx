@@ -133,7 +133,7 @@ export default function Widgets() {
     createMutation.mutate({ data: { name: newName, siteUrl: newSiteUrl } });
   };
 
-  const buildEmbedAttrs = (widget: { apiKey: string; agentName?: string | null; greeting?: string | null; color?: string | null; position?: string | null }) => {
+  const buildEmbedAttrs = (widget: { apiKey: string; agentName?: string | null; greeting?: string | null; color?: string | null; position?: string | null; lang?: string | null }) => {
     const domain = import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
     return [
       `src="${domain}/api/widget.js"`,
@@ -143,10 +143,11 @@ export default function Widgets() {
       widget.greeting  ? `data-greeting="${widget.greeting}"` : null,
       widget.color     ? `data-color="${widget.color}"` : null,
       widget.position  ? `data-position="${widget.position}"` : null,
+      widget.lang      ? `data-lang="${widget.lang}"` : null,
     ].filter(Boolean).join("\n  ");
   };
 
-  const copyEmbedCode = (widget: { apiKey: string; agentName?: string | null; greeting?: string | null; color?: string | null; position?: string | null }) => {
+  const copyEmbedCode = (widget: { apiKey: string; agentName?: string | null; greeting?: string | null; color?: string | null; position?: string | null; lang?: string | null }) => {
     const code = `<script\n  ${buildEmbedAttrs(widget)}>\n</script>`;
     navigator.clipboard.writeText(code);
     toast({ title: "Embed code copied to clipboard!" });

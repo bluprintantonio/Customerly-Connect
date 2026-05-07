@@ -11,6 +11,7 @@ export const widgetsTable = pgTable("widgets", {
   greeting: text("greeting"),
   color: text("color"),
   position: text("position"),
+  lang: text("lang"),
   webhookUrl: text("webhook_url"),
   webhookSecret: text("webhook_secret"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
