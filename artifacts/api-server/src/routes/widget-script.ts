@@ -68,9 +68,11 @@ router.get("/widget.js", (_req, res): void => {
     #sc-bubble:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(\${accentRgb},.55), 0 2px 8px rgba(0,0,0,.18); }
     #sc-bubble:active { transform: scale(.96); }
     #sc-bubble svg { width: 26px; height: 26px; transition: opacity .15s, transform .15s; }
-    .az-chat-logo {
-      width: 26px;
-      height: 26px;
+    .fv-chat-icon {
+      color: white;
+      font-size: 28px;
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 32;
+      line-height: 1;
       transition: opacity .15s, transform .15s;
     }
     #sc-bubble .sc-ico-close {
@@ -78,7 +80,7 @@ router.get("/widget.js", (_req, res): void => {
       transform: scale(.6) rotate(-45deg);
       position: absolute;
     }
-    #sc-bubble.open .az-chat-logo {
+    #sc-bubble.open .fv-chat-icon {
       opacity: 0;
       transform: scale(.6) rotate(45deg);
     }
@@ -266,6 +268,14 @@ router.get("/widget.js", (_req, res): void => {
   style.textContent = css;
   document.head.appendChild(style);
 
+  if (!document.querySelector('link[data-sc-icons]')) {
+    var iconLink = document.createElement('link');
+    iconLink.rel = 'stylesheet';
+    iconLink.setAttribute('data-sc-icons', '1');
+    iconLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=bolt_boost';
+    document.head.appendChild(iconLink);
+  }
+
   // ── DOM ───────────────────────────────────────────────────────────────
   var wrap = document.createElement('div');
   wrap.id = 'sc-wrap';
@@ -276,7 +286,7 @@ router.get("/widget.js", (_req, res): void => {
   bubble.id = 'sc-bubble';
   bubble.setAttribute('aria-label', 'Open chat');
   bubble.innerHTML = \`
-    <svg class="az-chat-logo" viewBox="0 0 24 24" fill="white"><path d="M5 14 L9 7 L13 12 L19 8 L15 15 L11 10 Z"/></svg>
+    <span class="material-symbols-outlined fv-chat-icon">bolt_boost</span>
     <svg class="sc-ico-close" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     <div id="sc-badge"></div>
   \`;
