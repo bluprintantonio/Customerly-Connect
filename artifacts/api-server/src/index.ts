@@ -23,7 +23,8 @@ async function migrate() {
       ADD COLUMN IF NOT EXISTS greeting   text,
       ADD COLUMN IF NOT EXISTS color      text,
       ADD COLUMN IF NOT EXISTS position   text,
-      ADD COLUMN IF NOT EXISTS lang       text
+      ADD COLUMN IF NOT EXISTS lang       text,
+      ADD COLUMN IF NOT EXISTS logo_url   text
   `);
   logger.info("DB migration: widgets columns ensured");
 }

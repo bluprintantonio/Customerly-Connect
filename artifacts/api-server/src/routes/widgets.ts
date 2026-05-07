@@ -57,6 +57,7 @@ router.patch("/widgets/:id", async (req, res): Promise<void> => {
   if ("color" in body.data) updateData.color = body.data.color ?? null;
   if ("position" in body.data) updateData.position = body.data.position ?? null;
   if ("lang" in body.data) updateData.lang = body.data.lang ?? null;
+  if ("logoUrl" in body.data) updateData.logoUrl = body.data.logoUrl ?? null;
   if ("webhookUrl" in body.data) updateData.webhookUrl = body.data.webhookUrl ?? null;
   if ("webhookSecret" in body.data) updateData.webhookSecret = body.data.webhookSecret ?? null;
 

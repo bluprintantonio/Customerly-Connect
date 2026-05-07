@@ -125,6 +125,8 @@ export interface Widget {
   /** @nullable */
   lang: string | null;
   /** @nullable */
+  logoUrl: string | null;
+  /** @nullable */
   webhookUrl: string | null;
   /** @nullable */
   webhookSecret: string | null;
@@ -169,6 +171,8 @@ export interface UpdateWidgetBody {
   position?: UpdateWidgetBodyPosition;
   /** @nullable */
   lang?: string | null;
+  /** @nullable */
+  logoUrl?: string | null;
   /** @nullable */
   webhookUrl?: string | null;
   /** @nullable */

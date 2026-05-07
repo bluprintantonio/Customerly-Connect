@@ -6,11 +6,252 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Trash2, Code2, Globe, Webhook, ChevronDown, ChevronUp, Save } from "lucide-react";
+import { Plus, Trash2, Code2, Globe, Webhook, ChevronDown, ChevronUp, Save, Palette } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { formatRelativeTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
+
+const PRESET_COLORS = [
+  "#1a56db", "#16a34a", "#B5C99A", "#dc2626", "#9333ea",
+  "#ea580c", "#0891b2", "#be185d", "#854d0e", "#374151",
+];
+
+function AppearanceSection({ widget }: {
+  widget: { id: number; color: string | null; logoUrl: string | null; agentName: string | null; greeting: string | null; position: string | null; lang: string | null }
+}) {
+  const [open, setOpen] = useState(false);
+  const [color, setColor] = useState(widget.color ?? "#1a56db");
+  const [logoUrl, setLogoUrl] = useState(widget.logoUrl ?? "");
+  const [agentName, setAgentName] = useState(widget.agentName ?? "");
+  const [greeting, setGreeting] = useState(widget.greeting ?? "");
+  const [position, setPosition] = useState(widget.position ?? "right");
+  const [lang, setLang] = useState(widget.lang ?? "en");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const updateMutation = useUpdateWidget({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getListWidgetsQueryKey() });
+        toast({ title: "Appearance saved" });
+      },
+      onError: () => {
+        toast({ title: "Failed to save", variant: "destructive" });
+      },
+    },
+  });
+
+  const handleSave = () => {
+    updateMutation.mutate({
+      id: widget.id,
+      data: {
+        color: color || null,
+        logoUrl: logoUrl || null,
+        agentName: agentName || null,
+        greeting: greeting || null,
+        position: (position as "left" | "right") || null,
+        lang: lang || null,
+      },
+    });
+  };
+
+  return (
+    <div className="border-t border-border/40 mt-4 pt-4">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors w-full"
+      >
+        <Palette className="h-4 w-4" />
+        Appearance &amp; Settings
+        {(widget.color || widget.logoUrl || widget.agentName) ? (
+          <span className="ml-auto text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5">Configured</span>
+        ) : null}
+        {open ? <ChevronUp className="h-4 w-4 ml-auto" /> : <ChevronDown className={cn("h-4 w-4", (widget.color || widget.logoUrl || widget.agentName) ? "" : "ml-auto")} />}
+      </button>
+
+      {open && (
+        <div className="mt-4 space-y-4">
+
+          {/* Color */}
+          <div className="space-y-2">
+            <Label className="text-xs">Accent Color</Label>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <input
+                  type="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="w-9 h-9 rounded-lg border border-border cursor-pointer p-0.5 bg-background"
+                />
+              </div>
+              <Input
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                placeholder="#1a56db"
+                className="text-xs h-9 font-mono w-28"
+                maxLength={7}
+              />
+              <div className="flex gap-1.5 flex-wrap">
+                {PRESET_COLORS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setColor(c)}
+                    title={c}
+                    className={cn(
+                      "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110",
+                      color === c ? "border-foreground scale-110" : "border-transparent"
+                    )}
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Logo */}
+          <div className="space-y-1.5">
+            <Label className="text-xs">Logo Image URL</Label>
+            <div className="flex items-center gap-2">
+              {logoUrl && (
+                <img
+                  src={logoUrl}
+                  alt="Logo preview"
+                  className="w-9 h-9 rounded-xl object-cover border border-border flex-shrink-0"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              )}
+              <Input
+                value={logoUrl}
+                onChange={(e) => setLogoUrl(e.target.value)}
+                placeholder="https://example.com/logo.png"
+                className="text-xs h-9"
+              />
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Shown in the widget header instead of initials. Use a square PNG or WebP (recommended 80×80px).
+            </p>
+          </div>
+
+          {/* Agent name */}
+          <div className="space-y-1.5">
+            <Label className="text-xs">Agent / Business Name</Label>
+            <Input
+              value={agentName}
+              onChange={(e) => setAgentName(e.target.value)}
+              placeholder="e.g. Fontainhas Village"
+              className="text-xs h-9"
+            />
+          </div>
+
+          {/* Greeting */}
+          <div className="space-y-1.5">
+            <Label className="text-xs">Greeting Message</Label>
+            <Input
+              value={greeting}
+              onChange={(e) => setGreeting(e.target.value)}
+              placeholder="e.g. Hi! How can we help you today?"
+              className="text-xs h-9"
+            />
+          </div>
+
+          {/* Position + Language */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Widget Position</Label>
+              <div className="flex rounded-lg border border-border overflow-hidden h-9">
+                {(["left", "right"] as const).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setPosition(p)}
+                    className={cn(
+                      "flex-1 text-xs font-medium transition-colors capitalize",
+                      position === p
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-background text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Language</Label>
+              <div className="flex rounded-lg border border-border overflow-hidden h-9">
+                {(["en", "pt"] as const).map((l) => (
+                  <button
+                    key={l}
+                    type="button"
+                    onClick={() => setLang(l)}
+                    className={cn(
+                      "flex-1 text-xs font-medium transition-colors uppercase",
+                      lang === l
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-background text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Live preview swatch */}
+          <div
+            className="rounded-xl p-3 flex items-center gap-3"
+            style={{ background: color }}
+          >
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt="Logo"
+                className="w-10 h-10 rounded-xl object-cover border-2 border-white/30 flex-shrink-0"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  const fallback = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = 'flex';
+                }}
+              />
+            ) : null}
+            <div
+              className="w-10 h-10 rounded-xl border-2 border-white/30 flex items-center justify-center text-sm font-bold flex-shrink-0"
+              style={{
+                background: "rgba(255,255,255,0.18)",
+                color: "white",
+                display: logoUrl ? "none" : "flex",
+              }}
+            >
+              {(agentName || "S").split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "S"}
+            </div>
+            <div>
+              <p className="text-sm font-bold" style={{ color: "white", textShadow: "0 1px 2px rgba(0,0,0,.25)" }}>
+                Hello from {agentName || "Support"} 👋
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.8)" }}>
+                {greeting || "How can we help?"}
+              </p>
+            </div>
+          </div>
+
+          <Button
+            size="sm"
+            onClick={handleSave}
+            disabled={updateMutation.isPending}
+            className="w-full rounded-lg"
+          >
+            <Save className="h-3.5 w-3.5 mr-1.5" />
+            {updateMutation.isPending ? "Saving…" : "Save Appearance"}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function WebhookSection({ widget }: { widget: { id: number; webhookUrl: string | null; webhookSecret: string | null } }) {
   const [open, setOpen] = useState(false);
@@ -133,21 +374,16 @@ export default function Widgets() {
     createMutation.mutate({ data: { name: newName, siteUrl: newSiteUrl } });
   };
 
-  const buildEmbedAttrs = (widget: { apiKey: string; agentName?: string | null; greeting?: string | null; color?: string | null; position?: string | null; lang?: string | null }) => {
+  const buildEmbedAttrs = (widget: { apiKey: string }) => {
     const domain = import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
     return [
       `src="${domain}/api/widget.js"`,
       `data-widget-key="${widget.apiKey}"`,
       `data-api-url="${domain}/api"`,
-      widget.agentName ? `data-agent-name="${widget.agentName}"` : null,
-      widget.greeting  ? `data-greeting="${widget.greeting}"` : null,
-      widget.color     ? `data-color="${widget.color}"` : null,
-      widget.position  ? `data-position="${widget.position}"` : null,
-      widget.lang      ? `data-lang="${widget.lang}"` : null,
-    ].filter(Boolean).join("\n  ");
+    ].join("\n  ");
   };
 
-  const copyEmbedCode = (widget: { apiKey: string; agentName?: string | null; greeting?: string | null; color?: string | null; position?: string | null; lang?: string | null }) => {
+  const copyEmbedCode = (widget: { apiKey: string }) => {
     const code = `<script\n  ${buildEmbedAttrs(widget)}>\n</script>`;
     navigator.clipboard.writeText(code);
     toast({ title: "Embed code copied to clipboard!" });
@@ -241,14 +477,29 @@ export default function Widgets() {
             <Card key={widget.id} data-testid={`widget-card-${widget.id}`} className="rounded-2xl border-border/60 shadow-sm overflow-hidden flex flex-col">
               <CardHeader className="bg-muted/30 pb-4 border-b border-border/40">
                 <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-xl flex items-center gap-2">
-                      {widget.name}
-                    </CardTitle>
-                    <CardDescription className="flex items-center gap-1.5 mt-1.5">
-                      <Globe className="h-3.5 w-3.5" />
-                      {widget.siteUrl}
-                    </CardDescription>
+                  <div className="flex items-center gap-3">
+                    {widget.logoUrl ? (
+                      <img
+                        src={widget.logoUrl}
+                        alt="Logo"
+                        className="w-10 h-10 rounded-xl object-cover border border-border flex-shrink-0"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    ) : (
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+                        style={{ background: widget.color ?? "#1a56db" }}
+                      >
+                        {(widget.agentName || widget.name).split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase()}
+                      </div>
+                    )}
+                    <div>
+                      <CardTitle className="text-xl">{widget.name}</CardTitle>
+                      <CardDescription className="flex items-center gap-1.5 mt-0.5">
+                        <Globe className="h-3.5 w-3.5" />
+                        {widget.siteUrl}
+                      </CardDescription>
+                    </div>
                   </div>
                   <Button
                     variant="ghost"
@@ -276,6 +527,9 @@ export default function Widgets() {
                       </code>
                     </pre>
                   </div>
+                  <p className="text-[11px] text-muted-foreground mt-1.5">
+                    Settings (color, logo, language) are loaded automatically from the server — no need to update this code.
+                  </p>
                 </div>
 
                 <div className="flex items-center justify-between mt-auto">
@@ -293,6 +547,7 @@ export default function Widgets() {
                   </Button>
                 </div>
 
+                <AppearanceSection widget={widget} />
                 <WebhookSection widget={widget} />
               </CardContent>
             </Card>

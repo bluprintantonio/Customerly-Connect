@@ -535,6 +535,8 @@ components:
           enum: ["left", "right", null]
         lang:
           type: ["string", "null"]
+        logoUrl:
+          type: ["string", "null"]
         webhookUrl:
           type: ["string", "null"]
         webhookSecret:
@@ -551,6 +553,7 @@ components:
         - color
         - position
         - lang
+        - logoUrl
         - webhookUrl
         - webhookSecret
         - createdAt
@@ -600,6 +603,8 @@ components:
           type: ["string", "null"]
           enum: ["left", "right", null]
         lang:
+          type: ["string", "null"]
+        logoUrl:
           type: ["string", "null"]
         webhookUrl:
           type: ["string", "null"]

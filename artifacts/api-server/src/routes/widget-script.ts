@@ -41,6 +41,7 @@ router.get("/widget.js", (_req, res): void => {
     var posAttr   = config.getAttribute('data-position')   || cfg.position  || 'right';
     var isLeft    = posAttr === 'left';
     var lang      = config.getAttribute('data-lang')       || cfg.lang      || 'en';
+    var logoUrl   = config.getAttribute('data-logo-url')   || cfg.logoUrl   || '';
 
     var T = {
       en: {
@@ -142,8 +143,9 @@ router.get("/widget.js", (_req, res): void => {
       .sc-top-logo {
         width:44px; height:44px; border-radius:14px; background:\${overlay};
         display:flex; align-items:center; justify-content:center;
-        font-size:15px; font-weight:700; color:\${ink};
+        font-size:15px; font-weight:700; color:\${ink}; overflow:hidden; flex-shrink:0;
       }
+      .sc-top-logo img { width:100%; height:100%; object-fit:cover; display:block; }
 
       /* Generic close / back buttons */
       .sc-icon-btn {
@@ -212,8 +214,9 @@ router.get("/widget.js", (_req, res): void => {
         width:36px; height:36px; border-radius:50%; flex-shrink:0;
         background:linear-gradient(135deg,\${accent},\${accentDark});
         display:flex; align-items:center; justify-content:center;
-        font-size:12px; font-weight:700; color:white;
+        font-size:12px; font-weight:700; color:white; overflow:hidden;
       }
+      .sc-chat-av img { width:100%; height:100%; object-fit:cover; display:block; }
       .sc-chat-name   { font-size:14px; font-weight:600; color:#111827; }
       .sc-chat-status { font-size:11px; color:#6b7280; display:flex; align-items:center; gap:4px; margin-top:1px; }
       .sc-dot { width:6px; height:6px; border-radius:50%; background:#4ade80; flex-shrink:0; }
@@ -410,7 +413,7 @@ router.get("/widget.js", (_req, res): void => {
       panel.innerHTML = \`
         <div id="sc-handle"></div>
         <div id="sc-topbar">
-          <div class="sc-top-logo">\${initials(agentName)}</div>
+          <div class="sc-top-logo">\${logoUrl ? '<img src="'+logoUrl+'" alt="" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">' : ''}<span style="display:\${logoUrl?'none':'flex'};align-items:center;justify-content:center;width:100%;height:100%">\${initials(agentName)}</span></div>
           \${closeBtn('sc-close-btn')}
         </div>
         <div id="sc-hero">
@@ -445,7 +448,7 @@ router.get("/widget.js", (_req, res): void => {
       panel.innerHTML = \`
         <div id="sc-chat-hdr">
           \${backBtn()}
-          <div class="sc-chat-av">\${initials(agentName)}</div>
+          <div class="sc-chat-av">\${logoUrl ? '<img src="'+logoUrl+'" alt="">' : initials(agentName)}</div>
           <div>
             <div class="sc-chat-name">\${agentName}</div>
             <div class="sc-chat-status"><span class="sc-dot"></span>\${t.repliesIn}</div>
@@ -488,7 +491,7 @@ router.get("/widget.js", (_req, res): void => {
       panel.innerHTML = \`
         <div id="sc-chat-hdr">
           \${backBtn()}
-          <div class="sc-chat-av">\${initials(agentName)}</div>
+          <div class="sc-chat-av">\${logoUrl ? '<img src="'+logoUrl+'" alt="">' : initials(agentName)}</div>
           <div>
             <div class="sc-chat-name">\${agentName}</div>
             <div class="sc-chat-status"><span class="sc-dot"></span>\${t.online}</div>

@@ -20,6 +20,8 @@ export interface UpdateWidgetBody {
   /** @nullable */
   lang?: string | null;
   /** @nullable */
+  logoUrl?: string | null;
+  /** @nullable */
   webhookUrl?: string | null;
   /** @nullable */
   webhookSecret?: string | null;

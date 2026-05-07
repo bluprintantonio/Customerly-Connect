@@ -26,6 +26,7 @@ router.get("/widget/config", async (req, res): Promise<void> => {
       color: widgetsTable.color,
       position: widgetsTable.position,
       lang: widgetsTable.lang,
+      logoUrl: widgetsTable.logoUrl,
     })
     .from(widgetsTable)
     .where(eq(widgetsTable.apiKey, key));
