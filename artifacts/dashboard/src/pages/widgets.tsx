@@ -144,17 +144,23 @@ function AppearanceSection({ widget }: {
               placeholder="e.g. Fontainhas Village"
               className="text-xs h-9"
             />
+            <p className="text-[11px] text-muted-foreground">
+              Auto-generates the heading: <span className="font-medium text-foreground">"Hello from {agentName || "Support"} 👋"</span>
+            </p>
           </div>
 
           {/* Greeting */}
           <div className="space-y-1.5">
-            <Label className="text-xs">Greeting Message</Label>
+            <Label className="text-xs">Subtitle</Label>
             <Input
               value={greeting}
               onChange={(e) => setGreeting(e.target.value)}
-              placeholder="e.g. Hi! How can we help you today?"
+              placeholder="e.g. We typically reply in minutes."
               className="text-xs h-9"
             />
+            <p className="text-[11px] text-muted-foreground">
+              Descriptive text shown <em>below</em> the heading — not the heading itself.
+            </p>
           </div>
 
           {/* Position + Language */}
@@ -228,12 +234,12 @@ function AppearanceSection({ widget }: {
             >
               {(agentName || "S").split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "S"}
             </div>
-            <div>
-              <p className="text-sm font-bold" style={{ color: "white", textShadow: "0 1px 2px rgba(0,0,0,.25)" }}>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold leading-tight" style={{ color: "white", textShadow: "0 1px 2px rgba(0,0,0,.25)" }}>
                 Hello from {agentName || "Support"} 👋
               </p>
               <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.8)" }}>
-                {greeting || "How can we help?"}
+                {greeting || <em>subtitle goes here</em>}
               </p>
             </div>
           </div>
