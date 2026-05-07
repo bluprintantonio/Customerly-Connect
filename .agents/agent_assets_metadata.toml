@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "JTShwNDpF9fJXxXJeG2XK"
+uri = "file://attached_assets/chat-bubble-icon.svg"
+type = "image"
+title = "Premium Chat Bubble Icon"
