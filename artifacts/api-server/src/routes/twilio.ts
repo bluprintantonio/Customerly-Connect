@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db, conversationsTable, messagesTable } from "@workspace/db";
 import { eq, desc } from "drizzle-orm";
-import { sendSms, getTwilioSettings } from "../lib/twilio";
+import { sendMessage, getTwilioSettings } from "../lib/twilio";
 
 const router: IRouter = Router();
 

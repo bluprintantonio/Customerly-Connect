@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useGetSettings, useUpdateSettings } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Save, Phone, Webhook, Eye, EyeOff, ExternalLink, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Save, Phone, Webhook, Eye, EyeOff, ExternalLink, MessageCircle, ChevronDown, ChevronUp, Send, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,8 @@ export default function SettingsPage() {
   const [twilioChannel, setTwilioChannel] = useState<"sms" | "whatsapp">("whatsapp");
   const [showToken, setShowToken] = useState(false);
   const [showWebhookDocs, setShowWebhookDocs] = useState(false);
+  const [testState, setTestState] = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const [testError, setTestError] = useState("");
 
   useEffect(() => {
     if (!settings) return;
@@ -40,6 +42,24 @@ export default function SettingsPage() {
       },
     },
   });
+
+  const handleTest = async () => {
+    setTestState("loading");
+    setTestError("");
+    try {
+      const res = await fetch("/api/settings/test-twilio", { method: "POST" });
+      const json = await res.json();
+      if (json.ok) {
+        setTestState("ok");
+      } else {
+        setTestState("error");
+        setTestError(json.error ?? "Unknown error");
+      }
+    } catch {
+      setTestState("error");
+      setTestError("Could not reach the server");
+    }
+  };
 
   const handleSave = () => {
     const data: Record<string, string> = {
@@ -280,14 +300,43 @@ Content-Type: application/json
         </div>
       </section>
 
-      <Button
-        onClick={handleSave}
-        disabled={updateMutation.isPending}
-        className="w-full sm:w-auto"
-      >
-        <Save className="h-4 w-4 mr-2" />
-        {updateMutation.isPending ? "Saving…" : "Save Settings"}
-      </Button>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button
+          onClick={handleSave}
+          disabled={updateMutation.isPending}
+          className="w-full sm:w-auto"
+        >
+          <Save className="h-4 w-4 mr-2" />
+          {updateMutation.isPending ? "Saving…" : "Save Settings"}
+        </Button>
+
+        <Button
+          variant="outline"
+          onClick={handleTest}
+          disabled={testState === "loading"}
+          className="w-full sm:w-auto"
+        >
+          <Send className="h-4 w-4 mr-2" />
+          {testState === "loading" ? "Sending…" : "Send Test Message"}
+        </Button>
+      </div>
+
+      {testState === "ok" && (
+        <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-xl px-4 py-3">
+          <CheckCircle className="h-4 w-4 shrink-0" />
+          Test message sent! Check your WhatsApp/SMS.
+        </div>
+      )}
+
+      {testState === "error" && (
+        <div className="flex items-start gap-2 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-xl px-4 py-3">
+          <XCircle className="h-4 w-4 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium">Test failed</p>
+            <p className="text-xs mt-0.5 opacity-80">{testError}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

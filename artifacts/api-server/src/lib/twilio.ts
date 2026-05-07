@@ -1,4 +1,5 @@
 import { getSetting } from "../routes/settings";
+import { logger } from "./logger";
 
 export async function getTwilioSettings() {
   const [accountSid, authToken, fromNumber, toNumber, channel] = await Promise.all([
@@ -8,7 +9,7 @@ export async function getTwilioSettings() {
     getSetting("twilioToNumber"),
     getSetting("twilioChannel"),
   ]);
-  return { accountSid, authToken, fromNumber, toNumber, channel: channel ?? "sms" };
+  return { accountSid, authToken, fromNumber, toNumber, channel: channel ?? "whatsapp" };
 }
 
 export async function sendMessage(to: string, from: string, body: string, accountSid: string, authToken: string): Promise<void> {
@@ -27,7 +28,7 @@ export async function sendMessage(to: string, from: string, body: string, accoun
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Twilio send failed: ${res.status} ${text}`);
+    throw new Error(`Twilio API error ${res.status}: ${text}`);
   }
 }
 
@@ -37,7 +38,10 @@ export async function notifyViaTwilio(
   messageContent: string
 ): Promise<void> {
   const { accountSid, authToken, fromNumber, toNumber, channel } = await getTwilioSettings();
-  if (!accountSid || !authToken || !fromNumber || !toNumber) return;
+  if (!accountSid || !authToken || !fromNumber || !toNumber) {
+    logger.warn("Twilio not configured — skipping notification");
+    return;
+  }
 
   const isWhatsApp = channel === "whatsapp";
   const to = isWhatsApp ? `whatsapp:${toNumber}` : toNumber;
@@ -45,5 +49,11 @@ export async function notifyViaTwilio(
   const channelLabel = isWhatsApp ? "WhatsApp" : "SMS";
 
   const text = `[SimpleChat] New message from ${visitorName}:\n"${messageContent}"\n\nReply to this ${channelLabel} to respond. Start your reply with #${conversationId}:`;
-  await sendMessage(to, from, text, accountSid, authToken);
+
+  try {
+    await sendMessage(to, from, text, accountSid, authToken);
+    logger.info({ conversationId, channel, to }, "Twilio notification sent");
+  } catch (err) {
+    logger.error({ err, conversationId, channel, to, from }, "Twilio notification failed");
+  }
 }
