@@ -67,16 +67,11 @@ router.get("/widget.js", (_req, res): void => {
     }
     #sc-bubble:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(\${accentRgb},.55), 0 2px 8px rgba(0,0,0,.18); }
     #sc-bubble:active { transform: scale(.96); }
-    #sc-bubble svg { width: 26px; height: 26px; fill: white; transition: opacity .15s, transform .15s; }
-    #sc-bubble .sc-ico-chat { opacity: 1; transform: scale(1) rotate(0deg); }
-    #sc-bubble .sc-ico-close { opacity: 0; transform: scale(.6) rotate(-45deg); position: absolute; }
-    #sc-bubble.open .sc-ico-chat  { opacity: 0; transform: scale(.6) rotate(45deg); }
-    #sc-bubble.open .sc-ico-close { opacity: 1; transform: scale(1) rotate(0deg); }
-
+    #sc-bubble svg { width: 26px; height: 26px; transition: opacity .15s, transform .15s; }
     .az-chat-logo {
       color: white;
       font-weight: 700;
-      font-size: 24px;
+      font-size: 22px;
       letter-spacing: -1px;
       font-family: Inter, sans-serif;
       display: flex;
@@ -86,9 +81,18 @@ router.get("/widget.js", (_req, res): void => {
       height: 100%;
       transition: opacity .15s, transform .15s;
     }
+    #sc-bubble .sc-ico-close {
+      opacity: 0;
+      transform: scale(.6) rotate(-45deg);
+      position: absolute;
+    }
     #sc-bubble.open .az-chat-logo {
       opacity: 0;
       transform: scale(.6) rotate(45deg);
+    }
+    #sc-bubble.open .sc-ico-close {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
     }
 
     /* Unread badge */
@@ -280,8 +284,8 @@ router.get("/widget.js", (_req, res): void => {
   bubble.id = 'sc-bubble';
   bubble.setAttribute('aria-label', 'Open chat');
   bubble.innerHTML = \`
-    <div class="sc-ico-chat az-chat-logo">Az</div>
-    <svg class="sc-ico-close" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    <div class="az-chat-logo">AZ</div>
+    <svg class="sc-ico-close" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     <div id="sc-badge"></div>
   \`;
   wrap.appendChild(bubble);
