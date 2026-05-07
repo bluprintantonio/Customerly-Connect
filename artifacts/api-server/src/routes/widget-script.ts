@@ -568,6 +568,18 @@ router.get("/widget.js", (_req, res): void => {
   bubble.onclick = function() {
     isOpen ? closePanel() : openPanel();
   };
+
+  // ── Public API ─────────────────────────────────────────────────────────
+  window.customerly = window.customerly || {};
+  window.customerly.open  = openPanel;
+  window.customerly.close = closePanel;
+  window.customerly.show  = openPanel;
+  window.customerly.hide  = closePanel;
+
+  window.SimpleChat = window.SimpleChat || {};
+  window.SimpleChat.open   = openPanel;
+  window.SimpleChat.close  = closePanel;
+  window.SimpleChat.toggle = function() { isOpen ? closePanel() : openPanel(); };
 })();
 `;
 
