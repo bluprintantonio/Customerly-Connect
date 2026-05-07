@@ -475,7 +475,7 @@ router.get("/widget.js", (_req, res): void => {
         \${tabsHtml('messages')}
       \`;
       document.getElementById('sc-back').addEventListener('click', showWelcome);
-      panel.querySelector('.sc-icon-btn.sc-ml .sc-icon-btn, .sc-ml .sc-icon-btn').onclick = closePanel;
+      panel.querySelector('.sc-ml .sc-icon-btn').onclick = closePanel;
       document.getElementById('sc-form').addEventListener('submit', function(e) { e.preventDefault(); startConversation(); });
       bindTabs('messages');
     }
