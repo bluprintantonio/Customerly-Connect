@@ -162,7 +162,7 @@ router.get("/widget.js", (_req, res): void => {
       /* Panel */
       #sc-panel {
         position:fixed; bottom:92px; \${isLeft?'left':'right'}:24px; z-index:2147483645;
-        width:400px; height:660px; border-radius:24px;
+        width:420px; height:620px; max-height:calc(100vh - 80px); border-radius:24px;
         background:\${accent}; overflow:hidden;
         box-shadow:0 16px 56px rgba(0,0,0,.22),0 2px 10px rgba(0,0,0,.1);
         display:flex; flex-direction:column;
@@ -173,15 +173,15 @@ router.get("/widget.js", (_req, res): void => {
       #sc-panel.open { transform:scale(1) translateY(0); opacity:1; pointer-events:all; }
       #sc-panel.sc-chat-mode { background:#f8f9fa; }
       @media (max-width:480px) {
-        #sc-panel { width:calc(100vw - 16px) !important; height:calc(100vh - 96px) !important;
-          \${isLeft?'left:8px':'right:8px'} !important; border-radius:20px !important; }
+        #sc-panel { width:calc(100vw - 24px) !important; height:calc(100vh - 80px) !important;
+          max-height:720px !important; \${isLeft?'left:12px':'right:12px'} !important; border-radius:20px !important; }
       }
 
       /* Drag handle */
-      #sc-handle { width:36px; height:4px; border-radius:2px; background:\${overlay}; margin:10px auto 0; flex-shrink:0; }
+      #sc-handle { width:36px; height:4px; border-radius:2px; background:\${overlay}; margin:8px auto 0; flex-shrink:0; }
 
       /* Top bar (home) */
-      #sc-topbar { display:flex; align-items:center; gap:10px; padding:12px 16px; flex-shrink:0; }
+      #sc-topbar { display:flex; align-items:center; gap:10px; padding:8px 14px; flex-shrink:0; }
       .sc-top-logo {
         width:40px; height:40px; border-radius:12px; background:\${overlay};
         display:flex; align-items:center; justify-content:center;
@@ -204,17 +204,17 @@ router.get("/widget.js", (_req, res): void => {
       .sc-icon-btn svg { width:15px; height:15px; stroke:\${ink}; fill:none; stroke-width:2.5; stroke-linecap:round; }
 
       /* Hero */
-      #sc-hero { padding:6px 20px 24px; flex-shrink:0; }
-      #sc-hero h2 { font-size:26px; font-weight:700; color:\${ink}; line-height:1.2; margin:0 0 10px; letter-spacing:-.4px; }
-      #sc-hero p  { font-size:14px; color:\${inkSub}; line-height:1.55; margin:0; }
+      #sc-hero { padding:4px 16px 14px; flex-shrink:0; }
+      #sc-hero h2 { font-size:22px; font-weight:700; color:\${ink}; line-height:1.2; margin:0 0 6px; letter-spacing:-.3px; }
+      #sc-hero p  { font-size:13px; color:\${inkSub}; line-height:1.5; margin:0; }
 
       /* Cards scrollable area */
-      #sc-cards { flex:1; overflow-y:auto; padding:0 12px 12px; }
+      #sc-cards { flex:1; overflow-y:auto; padding:0 12px 8px; }
       #sc-cards::-webkit-scrollbar { width:0; }
 
       /* Card */
-      .sc-card { background:white; border-radius:16px; overflow:hidden; margin-bottom:10px; box-shadow:0 2px 16px rgba(0,0,0,.1); }
-      .sc-card-header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px 10px; }
+      .sc-card { background:white; border-radius:16px; overflow:hidden; margin-bottom:10px; box-shadow:0 2px 12px rgba(0,0,0,.09); }
+      .sc-card-header { display:flex; align-items:center; justify-content:space-between; padding:12px 14px 8px; }
       .sc-card-title  { font-size:13px; font-weight:600; color:#374151; }
 
       /* Avatar stack */
@@ -244,7 +244,7 @@ router.get("/widget.js", (_req, res): void => {
       .sc-start-card-btn svg { width:14px; height:14px; fill:white; flex-shrink:0; }
 
       /* Tab bar */
-      #sc-tabs { display:flex; background:white; flex-shrink:0; border-top:1px solid #f0f0f0; padding:8px 0 10px; }
+      #sc-tabs { display:flex; background:white; flex-shrink:0; border-top:1px solid #f0f0f0; padding:6px 0 8px; }
       .sc-tab {
         flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
         padding:4px 0; border:none; background:none; cursor:pointer;
@@ -628,7 +628,10 @@ router.get("/widget.js", (_req, res): void => {
               '</div>' +
               '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>' +
             '</div>' +
-            '<button class="sc-new-link" id="sc-new-btn">' + t.startNew + '</button>' +
+            '<button class="sc-start-card-btn" id="sc-new-btn">' +
+              '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
+              t.startNew +
+            '</button>' +
           '</div>'
         : '<div class="sc-card">' +
             '<div class="sc-card-header">' +
