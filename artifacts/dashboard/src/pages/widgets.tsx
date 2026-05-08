@@ -12,19 +12,14 @@ import { useToast } from "@/hooks/use-toast";
 import { formatRelativeTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-const PRESET_COLORS = [
-  "#1a56db", "#16a34a", "#B5C99A", "#dc2626", "#9333ea",
-  "#ea580c", "#0891b2", "#be185d", "#854d0e", "#374151",
-];
-
 const ICON_OPTIONS = [
-  { value: "chat",            label: "Chat",            hint: "Classic speech bubble" },
-  { value: "quick_reply",     label: "Quick Reply",     hint: "Fast reply arrow" },
-  { value: "send",            label: "Send",            hint: "Paper plane" },
-  { value: "contact_support", label: "Support",         hint: "Headset / help agent" },
-  { value: "co_present",      label: "Present",         hint: "Two people" },
-  { value: "info",            label: "Info",            hint: "Information circle" },
-  { value: "bolt",            label: "Bolt",            hint: "Lightning bolt" },
+  { value: "chat" },
+  { value: "quick_reply" },
+  { value: "send" },
+  { value: "contact_support" },
+  { value: "co_present" },
+  { value: "info" },
+  { value: "bolt" },
 ];
 
 function AppearanceSection({ widget }: {
@@ -89,71 +84,50 @@ function AppearanceSection({ widget }: {
           {/* Icon style */}
           <div className="space-y-2">
             <Label className="text-xs">Bubble Icon</Label>
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="flex gap-2 flex-wrap">
               {ICON_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
                   type="button"
+                  title={opt.value}
                   onClick={() => setIconStyle(opt.value)}
                   className={cn(
-                    "flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all text-left",
+                    "w-11 h-11 rounded-full flex items-center justify-center transition-all",
                     iconStyle === opt.value
-                      ? "border-primary bg-primary/5 text-primary"
-                      : "border-border bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                      ? "ring-2 ring-offset-2 ring-primary scale-110"
+                      : "opacity-60 hover:opacity-90 hover:scale-105"
                   )}
+                  style={{ background: `linear-gradient(135deg, ${color}, color-mix(in srgb, ${color} 70%, black))` }}
                 >
                   <span
-                    className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[10px] font-bold"
-                    style={{ background: iconStyle === opt.value ? color : "#94a3b8" }}
+                    className="material-symbols-outlined"
+                    style={{
+                      fontFamily: "'Material Symbols Outlined'",
+                      fontSize: "22px",
+                      color: "white",
+                      fontVariationSettings: "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 32",
+                      lineHeight: 1,
+                      display: "block",
+                    }}
                   >
-                    {opt.label[0]}
+                    {opt.value}
                   </span>
-                  <div>
-                    <div>{opt.label}</div>
-                    <div className="text-[10px] font-normal opacity-60">{opt.hint}</div>
-                  </div>
                 </button>
               ))}
             </div>
-            <p className="text-[11px] text-muted-foreground">
-              Selected: <span className="font-mono text-foreground">{iconStyle}</span> — visible in the floating chat bubble.
-            </p>
           </div>
 
           {/* Color */}
           <div className="space-y-2">
             <Label className="text-xs">Accent Color</Label>
             <div className="flex items-center gap-2">
-              <div className="relative">
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  className="w-9 h-9 rounded-lg border border-border cursor-pointer p-0.5 bg-background"
-                />
-              </div>
-              <Input
+              <input
+                type="color"
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
-                placeholder="#1a56db"
-                className="text-xs h-9 font-mono w-28"
-                maxLength={7}
+                className="w-10 h-10 rounded-lg border border-border cursor-pointer p-0.5 bg-background"
               />
-              <div className="flex gap-1.5 flex-wrap">
-                {PRESET_COLORS.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setColor(c)}
-                    title={c}
-                    className={cn(
-                      "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110",
-                      color === c ? "border-foreground scale-110" : "border-transparent"
-                    )}
-                    style={{ backgroundColor: c }}
-                  />
-                ))}
-              </div>
+              <span className="text-xs font-mono text-muted-foreground">{color}</span>
             </div>
           </div>
 
@@ -210,44 +184,40 @@ function AppearanceSection({ widget }: {
           </div>
 
           {/* Position + Language */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label className="text-xs">Widget Position</Label>
-              <div className="flex rounded-lg border border-border overflow-hidden h-9">
+              <div className="flex flex-col gap-1.5">
                 {(["left", "right"] as const).map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setPosition(p)}
-                    className={cn(
-                      "flex-1 text-xs font-medium transition-colors capitalize",
-                      position === p
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-background text-muted-foreground hover:bg-muted"
-                    )}
-                  >
-                    {p}
-                  </button>
+                  <label key={p} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`position-${widget.id}`}
+                      value={p}
+                      checked={position === p}
+                      onChange={() => setPosition(p)}
+                      className="accent-primary w-3.5 h-3.5"
+                    />
+                    <span className="text-xs capitalize text-foreground">{p}</span>
+                  </label>
                 ))}
               </div>
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label className="text-xs">Language</Label>
-              <div className="flex rounded-lg border border-border overflow-hidden h-9">
-                {(["en", "pt"] as const).map((l) => (
-                  <button
-                    key={l}
-                    type="button"
-                    onClick={() => setLang(l)}
-                    className={cn(
-                      "flex-1 text-xs font-medium transition-colors uppercase",
-                      lang === l
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-background text-muted-foreground hover:bg-muted"
-                    )}
-                  >
-                    {l}
-                  </button>
+              <div className="flex flex-col gap-1.5">
+                {([["en", "English"], ["pt", "Português"]] as const).map(([val, label]) => (
+                  <label key={val} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`lang-${widget.id}`}
+                      value={val}
+                      checked={lang === val}
+                      onChange={() => setLang(val)}
+                      className="accent-primary w-3.5 h-3.5"
+                    />
+                    <span className="text-xs text-foreground">{label}</span>
+                  </label>
                 ))}
               </div>
             </div>
