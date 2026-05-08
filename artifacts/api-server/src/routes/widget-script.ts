@@ -177,13 +177,15 @@ router.get("/widget.js", (_req, res): void => {
       #sc-handle { width:36px; height:4px; border-radius:2px; background:\${overlay}; margin:10px auto 0; flex-shrink:0; }
 
       /* Top bar (home) */
-      #sc-topbar { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; flex-shrink:0; }
+      #sc-topbar { display:flex; align-items:center; gap:10px; padding:12px 16px; flex-shrink:0; }
       .sc-top-logo {
-        width:44px; height:44px; border-radius:14px; background:\${overlay};
+        width:40px; height:40px; border-radius:12px; background:\${overlay};
         display:flex; align-items:center; justify-content:center;
-        font-size:15px; font-weight:700; color:\${ink}; overflow:hidden; flex-shrink:0;
+        font-size:14px; font-weight:700; color:\${ink}; overflow:hidden; flex-shrink:0;
       }
       .sc-top-logo img { width:100%; height:100%; object-fit:cover; display:block; }
+      .sc-top-name { font-size:15px; font-weight:600; color:\${ink}; flex:1; }
+
 
       /* Generic close / back buttons */
       .sc-icon-btn {
@@ -250,22 +252,22 @@ router.get("/widget.js", (_req, res): void => {
       /* Chat header */
       #sc-chat-hdr {
         display:flex; align-items:center; gap:10px; padding:12px 14px;
-        background:white; border-bottom:1px solid #f3f4f6; flex-shrink:0;
+        background:\${accent}; flex-shrink:0;
       }
       .sc-chat-av {
         width:36px; height:36px; border-radius:50%; flex-shrink:0;
-        background:linear-gradient(135deg,\${accent},\${accentDark});
+        background:\${overlay};
         display:flex; align-items:center; justify-content:center;
-        font-size:12px; font-weight:700; color:white; overflow:hidden;
+        font-size:12px; font-weight:700; color:\${ink}; overflow:hidden;
       }
       .sc-chat-av img { width:100%; height:100%; object-fit:cover; display:block; }
-      .sc-chat-name   { font-size:14px; font-weight:600; color:#111827; }
-      .sc-chat-status { font-size:11px; color:#6b7280; display:flex; align-items:center; gap:4px; margin-top:1px; }
+      .sc-chat-name   { font-size:14px; font-weight:600; color:\${ink}; }
+      .sc-chat-status { font-size:11px; color:\${inkSub}; display:flex; align-items:center; gap:4px; margin-top:1px; }
       .sc-dot { width:6px; height:6px; border-radius:50%; background:#4ade80; flex-shrink:0; }
       #sc-chat-hdr .sc-ml { margin-left:auto; }
-      #sc-panel.sc-chat-mode .sc-icon-btn { background:#f3f4f6; }
-      #sc-panel.sc-chat-mode .sc-icon-btn:hover { background:#e5e7eb; }
-      #sc-panel.sc-chat-mode .sc-icon-btn svg { stroke:#374151; }
+      #sc-panel.sc-chat-mode .sc-icon-btn { background:\${overlay} !important; }
+      #sc-panel.sc-chat-mode .sc-icon-btn:hover { background:\${overlayHov} !important; }
+      #sc-panel.sc-chat-mode .sc-icon-btn svg { stroke:\${ink} !important; }
 
       /* Form */
       #sc-form-wrap { flex:1; overflow-y:auto; padding:16px; background:white; }
@@ -563,6 +565,7 @@ router.get("/widget.js", (_req, res): void => {
         '<div id="sc-handle"></div>' +
         '<div id="sc-topbar">' +
           '<div class="sc-top-logo">' + logoInner() + '</div>' +
+          '<span class="sc-top-name">' + agentName + '</span>' +
           closeBtn('sc-close-btn') +
         '</div>' +
         '<div id="sc-hero">' +
