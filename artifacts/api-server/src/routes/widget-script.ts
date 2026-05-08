@@ -274,7 +274,7 @@ router.get("/widget.js", (_req, res): void => {
       #sc-panel.sc-chat-mode .sc-icon-btn svg { stroke:\${ink} !important; }
 
       /* Form */
-      #sc-form-wrap { flex:1; overflow-y:auto; padding:16px; background:white; }
+      #sc-form-wrap { flex:1; overflow-y:auto; padding:16px; background:#f9fafb; }
       .sc-field { display:flex; flex-direction:column; gap:4px; margin-bottom:9px; }
       .sc-field label { font-size:11px; font-weight:600; color:#374151; letter-spacing:.3px; text-transform:uppercase; }
       .sc-field input, .sc-field textarea {
@@ -786,24 +786,26 @@ router.get("/widget.js", (_req, res): void => {
           '<div class="sc-ml">' + closeBtn() + '</div>' +
         '</div>' +
         '<div id="sc-form-wrap">' +
-          '<form id="sc-form" autocomplete="on">' +
-            '<div class="sc-field">' +
-              '<label for="sc-name">' + t.nameLabel + '</label>' +
-              '<input id="sc-name" name="name" placeholder="' + t.namePlaceholder + '" required autocomplete="name" />' +
-            '</div>' +
-            '<div class="sc-field">' +
-              '<label for="sc-phone">' + t.phoneLabel + '</label>' +
-              '<input id="sc-phone" name="phone" type="tel" placeholder="' + t.phonePlaceholder + '" autocomplete="tel" />' +
-            '</div>' +
-            '<div class="sc-field">' +
-              '<label for="sc-msg">' + t.msgLabel + '</label>' +
-              '<textarea id="sc-msg" name="message" placeholder="' + t.msgPlaceholder + '" required></textarea>' +
-            '</div>' +
-            '<button type="submit" id="sc-send-btn">' +
-              '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
-              t.sendBtn +
-            '</button>' +
-          '</form>' +
+          '<div class="sc-card" style="padding:16px;">' +
+            '<form id="sc-form" autocomplete="on">' +
+              '<div class="sc-field">' +
+                '<label for="sc-name">' + t.nameLabel + '</label>' +
+                '<input id="sc-name" name="name" placeholder="' + t.namePlaceholder + '" required autocomplete="name" />' +
+              '</div>' +
+              '<div class="sc-field">' +
+                '<label for="sc-phone">' + t.phoneLabel + '</label>' +
+                '<input id="sc-phone" name="phone" type="tel" placeholder="' + t.phonePlaceholder + '" autocomplete="tel" />' +
+              '</div>' +
+              '<div class="sc-field">' +
+                '<label for="sc-msg">' + t.msgLabel + '</label>' +
+                '<textarea id="sc-msg" name="message" placeholder="' + t.msgPlaceholder + '" required></textarea>' +
+              '</div>' +
+              '<button type="submit" id="sc-send-btn">' +
+                '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
+                t.sendBtn +
+              '</button>' +
+            '</form>' +
+          '</div>' +
         '</div>' +
         tabsHtml('messages');
       document.getElementById('sc-back').addEventListener('click', showWelcome);
