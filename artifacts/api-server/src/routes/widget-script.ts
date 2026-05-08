@@ -31,7 +31,7 @@ router.get("/widget.js", (_req, res): void => {
     return;
   }
 
-  fetch(apiBase + '/widget/config?key=' + encodeURIComponent(apiKey))
+  fetch(apiBase + '/widget/config?key=' + encodeURIComponent(apiKey) + '&_=' + Date.now(), { cache: 'no-store' })
     .then(function(r) { return r.ok ? r.json() : {}; })
     .catch(function() { return {}; })
     .then(function(cfg) {
