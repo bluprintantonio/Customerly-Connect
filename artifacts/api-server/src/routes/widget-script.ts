@@ -126,9 +126,10 @@ router.get("/widget.js", (_req, res): void => {
       #sc-bubble:active { transform:scale(.96); }
       #sc-wrap .material-symbols-outlined {
         font-family:'Material Symbols Outlined'!important; font-weight:normal !important; font-style:normal !important;
-        font-size:28px !important; line-height:1 !important; display:inline-block !important;
-        white-space:nowrap !important; direction:ltr !important;
-        -webkit-font-smoothing:antialiased;
+        font-size:31px !important; line-height:1 !important; display:inline-block !important;
+        white-space:nowrap !important; direction:ltr !important; letter-spacing:normal !important;
+        text-transform:none !important; -webkit-font-smoothing:antialiased;
+        font-feature-settings:'liga' !important; -webkit-font-feature-settings:'liga' !important;
         font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 32 !important;
       }
       .fv-chat-icon { color:white; transition:opacity .15s,transform .15s; }

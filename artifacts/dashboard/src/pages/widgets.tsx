@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useListWidgets, useCreateWidget, useDeleteWidget, useUpdateWidget, getListWidgetsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,16 @@ function AppearanceSection({ widget }: {
   const [position, setPosition] = useState(widget.position ?? "right");
   const [lang, setLang] = useState(widget.lang ?? "en");
   const { toast } = useToast();
+
+  useEffect(() => {
+    setColor(widget.color ?? "#1a56db");
+    setLogoUrl(widget.logoUrl ?? "");
+    setIconStyle(widget.iconStyle ?? "chat");
+    setAgentName(widget.agentName ?? "");
+    setGreeting(widget.greeting ?? "");
+    setPosition(widget.position ?? "right");
+    setLang(widget.lang ?? "en");
+  }, [widget.id, widget.color, widget.logoUrl, widget.iconStyle, widget.agentName, widget.greeting, widget.position, widget.lang]);
   const queryClient = useQueryClient();
 
   const updateMutation = useUpdateWidget({
@@ -100,14 +110,23 @@ function AppearanceSection({ widget }: {
                   style={{ background: `linear-gradient(135deg, ${color}, color-mix(in srgb, ${color} 70%, black))` }}
                 >
                   <span
-                    className="material-symbols-outlined"
                     style={{
                       fontFamily: "'Material Symbols Outlined'",
+                      fontStyle: "normal",
+                      fontWeight: "normal",
                       fontSize: "22px",
                       color: "white",
                       fontVariationSettings: "'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 32",
+                      fontFeatureSettings: "'liga'",
+                      WebkitFontFeatureSettings: "'liga'",
+                      textRendering: "optimizeLegibility" as const,
                       lineHeight: 1,
-                      display: "block",
+                      display: "inline-block",
+                      whiteSpace: "nowrap",
+                      direction: "ltr",
+                      letterSpacing: "normal",
+                      textTransform: "none" as const,
+                      userSelect: "none" as const,
                     }}
                   >
                     {opt.value}

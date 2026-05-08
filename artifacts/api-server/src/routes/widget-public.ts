@@ -36,6 +36,8 @@ router.get("/widget/config", async (req, res): Promise<void> => {
     return;
   }
   res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
   res.json(widget);
 });
 
