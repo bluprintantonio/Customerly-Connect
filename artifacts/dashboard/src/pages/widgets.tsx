@@ -418,7 +418,7 @@ export default function Widgets() {
   const buildEmbedAttrs = (widget: { apiKey: string }) => {
     const domain = import.meta.env.VITE_PUBLIC_API_URL || window.location.origin;
     return [
-      `src="${domain}/api/widget.js"`,
+      `src="${domain}/api/widget.js?v=3"`,
       `data-widget-key="${widget.apiKey}"`,
       `data-api-url="${domain}/api"`,
     ].join("\n  ");
