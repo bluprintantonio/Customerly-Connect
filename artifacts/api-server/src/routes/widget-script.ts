@@ -386,7 +386,7 @@ router.get("/widget.js", (_req, res): void => {
       var iconLink = document.createElement('link');
       iconLink.rel = 'stylesheet';
       iconLink.setAttribute('data-sc-icons', '1');
-      iconLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=bolt,chat,co_present,contact_support,info,quick_reply,send&display=block';
+      iconLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=bolt,chat,co_present,contact_support,forum,info,send&display=block';
       document.head.appendChild(iconLink);
     }
 

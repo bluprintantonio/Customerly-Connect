@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 const ICON_OPTIONS = [
   { value: "chat" },
-  { value: "quick_reply" },
+  { value: "forum" },
   { value: "send" },
   { value: "contact_support" },
   { value: "co_present" },
