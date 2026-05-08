@@ -115,11 +115,12 @@ router.get("/widget.js", (_req, res): void => {
       }
       #sc-bubble:hover { transform:scale(1.08); box-shadow:0 6px 24px rgba(\${accentRgb},.55),0 2px 8px rgba(0,0,0,.18); }
       #sc-bubble:active { transform:scale(.96); }
-      .material-symbols-outlined {
-        font-family:'Material Symbols Outlined'!important; font-weight:normal; font-style:normal;
-        font-size:28px; line-height:1; display:inline-block; white-space:nowrap; direction:ltr;
+      #sc-wrap .material-symbols-outlined {
+        font-family:'Material Symbols Outlined'!important; font-weight:normal !important; font-style:normal !important;
+        font-size:28px !important; line-height:1 !important; display:inline-block !important;
+        white-space:nowrap !important; direction:ltr !important;
         -webkit-font-smoothing:antialiased;
-        font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 32;
+        font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 32 !important;
       }
       .fv-chat-icon { color:white; transition:opacity .15s,transform .15s; }
       #sc-bubble .sc-ico-close {
