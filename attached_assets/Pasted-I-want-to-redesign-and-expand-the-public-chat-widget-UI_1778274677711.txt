@@ -1,0 +1,190 @@
+I want to redesign and expand the public chat widget UI to behave more like a modern support/messaging platform similar to Customerly Intercom Crisp.
+
+Main goal:
+Transform the current simple popup into a multi-section conversational support widget with improved proportions navigation and UX.
+
+1. Widget aspect ratio and layout
+Improve the widget proportions and sizing.
+
+Current widget feels too tall and empty.
+
+New requirements:
+- more balanced aspect ratio
+- optimized spacing
+- modern mobile-first layout
+- smoother vertical rhythm
+- reduce empty dead space
+- adaptive height based on content
+- desktop:
+  width around 380-420px
+  height around 680-760px
+- mobile:
+  nearly fullscreen but with margins and rounded corners
+
+2. Add bottom navigation tabs
+Add a persistent bottom navigation similar to Customerly.
+
+Tabs:
+- Home
+- Messages
+- Help
+
+Use Google Material Symbols icons.
+
+Suggested icons:
+- Home → home
+- Messages → chat
+- Help → help
+
+Behavior:
+- active tab highlighted with accent color
+- smooth transitions between sections
+- maintain widget state
+- mobile responsive
+
+3. Home screen redesign
+Home should include:
+
+A. Header
+- company logo or avatar
+- greeting title
+- short subtitle/description
+- optional notification badge
+- close button
+
+B. Conversations preview
+- latest conversations
+- avatar
+- name
+- preview text
+- unread indicator
+- timestamp
+- “See all” action
+
+C. Main CTA
+- Start Conversation button
+- customizable color
+
+D. Optional blocks
+Enable toggles in admin UI for:
+- WhatsApp CTA
+- Help Center CTA
+- Knowledge base search
+- custom links/cards
+
+4. Messages section
+Create a dedicated messages/inbox view.
+
+Features:
+- list of conversations
+- avatars
+- unread badges
+- preview snippets
+- timestamps
+- scrollable conversation list
+- clicking conversation opens thread
+
+Thread view:
+- modern message bubbles
+- typing state
+- message timestamps
+- sticky reply area
+- attachment-ready structure
+- smooth scrolling
+
+5. Help section
+Create a Help Center tab.
+
+Features:
+- search bar
+- article/category cards
+- article counts
+- expandable categories
+- modern support center layout
+
+Admin configurable:
+- categories
+- article links
+- external URLs
+- FAQ blocks
+
+6. Appearance controls
+Expand admin UI appearance settings.
+
+Allow editing:
+- primary color
+- secondary color
+- gradient
+- icon style
+- logo
+- border radius
+- widget shadow intensity
+- typography scale
+- compact/comfortable spacing
+
+Defaults:
+Azimute:
+#2fb6fa
+
+Fontainhas:
+#b5c99a
+
+7. Icon customization
+Continue using Google Material Symbols.
+
+Allow selecting:
+- quick_reply
+- bolt
+- chat
+- info
+- co_present
+- contact_support
+- send
+
+Admin UI should preview icon live.
+
+8. Performance
+Requirements:
+- smooth animations
+- no layout jumps
+- lazy render hidden tabs
+- preserve unread badge logic
+- preserve open/close animation
+- preserve customerly.open compatibility
+- no duplicate DOM rendering
+
+9. Mobile UX
+Important:
+- improve touch experience
+- fixed bottom navigation
+- safe area support
+- proper keyboard behavior
+- scroll locking
+- iOS friendly
+
+10. Architecture
+Please refactor the widget structure cleanly.
+
+Separate:
+- navigation
+- views/screens
+- appearance config
+- messaging
+- help center
+- reusable UI components
+
+11. Keep compatibility
+Keep working:
+- customerly.open()
+- customerly.close()
+- SimpleChat.open()
+- existing embed snippets
+- existing conversations
+
+12. Deliverables
+After implementation tell me:
+- which files changed
+- if migrations are required
+- any new API routes
+- any new database models
+- how to configure Home/Messages/Help sections

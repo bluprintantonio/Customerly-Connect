@@ -162,7 +162,7 @@ router.get("/widget.js", (_req, res): void => {
       /* Panel */
       #sc-panel {
         position:fixed; bottom:92px; \${isLeft?'left':'right'}:24px; z-index:2147483645;
-        width:360px; height:580px; border-radius:24px;
+        width:400px; height:660px; border-radius:24px;
         background:\${accent}; overflow:hidden;
         box-shadow:0 16px 56px rgba(0,0,0,.22),0 2px 10px rgba(0,0,0,.1);
         display:flex; flex-direction:column;
@@ -172,6 +172,10 @@ router.get("/widget.js", (_req, res): void => {
       }
       #sc-panel.open { transform:scale(1) translateY(0); opacity:1; pointer-events:all; }
       #sc-panel.sc-chat-mode { background:#f8f9fa; }
+      @media (max-width:480px) {
+        #sc-panel { width:calc(100vw - 16px) !important; height:calc(100vh - 96px) !important;
+          \${isLeft?'left:8px':'right:8px'} !important; border-radius:20px !important; }
+      }
 
       /* Drag handle */
       #sc-handle { width:36px; height:4px; border-radius:2px; background:\${overlay}; margin:10px auto 0; flex-shrink:0; }
@@ -379,6 +383,86 @@ router.get("/widget.js", (_req, res): void => {
         transition:color .15s;
       }
       .sc-new-link:hover { color:#374151; }
+
+      /* Shared accent-header secondary button */
+      .sc-new-conv-btn {
+        display:flex !important; align-items:center !important; justify-content:center !important; gap:8px !important;
+        width:100% !important; padding:11px !important; border-radius:12px !important; border:none !important;
+        background:linear-gradient(135deg,\${accent},\${accentDark}) !important;
+        color:white !important; font-size:13px !important; font-weight:600 !important; cursor:pointer !important;
+        transition:opacity .15s,transform .1s !important;
+      }
+      .sc-new-conv-btn:hover { opacity:.92 !important; }
+      .sc-new-conv-btn:active { transform:scale(.98) !important; }
+      .sc-new-conv-btn svg { width:14px; height:14px; fill:white; flex-shrink:0; }
+
+      /* Messages list view */
+      #sc-msg-list-body { flex:1; overflow-y:auto; background:#f9fafb; }
+      .sc-list-header { padding:16px 16px 10px; background:white; border-bottom:1px solid #f3f4f6; }
+      .sc-list-header-title { font-size:12px; font-weight:700; color:#6b7280; letter-spacing:.5px; text-transform:uppercase; }
+      .sc-conv-row {
+        display:flex; align-items:center; gap:12px; padding:14px 16px;
+        background:white; border-bottom:1px solid #f3f4f6; cursor:pointer; transition:background .15s;
+      }
+      .sc-conv-row:hover { background:#f9fafb; }
+      .sc-conv-row-av {
+        width:44px; height:44px; border-radius:50%; flex-shrink:0;
+        background:linear-gradient(135deg,\${accent},\${accentDark});
+        display:flex; align-items:center; justify-content:center;
+        font-size:14px; font-weight:700; color:white;
+      }
+      .sc-conv-row-info { flex:1; min-width:0; }
+      .sc-conv-row-name { font-size:13px; font-weight:600; color:#111827; }
+      .sc-conv-row-preview { font-size:12px; color:#6b7280; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .sc-conv-row-time { font-size:11px; color:#9ca3af; flex-shrink:0; align-self:flex-start; padding-top:2px; }
+      .sc-list-cta { padding:16px; }
+      .sc-conv-empty { text-align:center; padding:40px 24px 20px; }
+      .sc-conv-empty-icon { font-size:36px; margin-bottom:10px; }
+      .sc-conv-empty-text { font-size:13px; color:#6b7280; margin-bottom:16px; line-height:1.5; }
+
+      /* Date separator in thread */
+      .sc-date-sep {
+        text-align:center; font-size:11px; color:#9ca3af; margin:8px 0; position:relative; flex-shrink:0;
+      }
+      .sc-date-sep span {
+        background:white; padding:0 10px; position:relative; z-index:1;
+      }
+      .sc-date-sep::before {
+        content:''; position:absolute; left:0; right:0; top:50%; border-top:1px solid #f0f0f0;
+      }
+
+      /* Help section */
+      #sc-help-body { flex:1; overflow-y:auto; background:white; }
+      .sc-search-wrap { padding:14px 16px; background:white; border-bottom:1px solid #f3f4f6; }
+      .sc-search-input {
+        width:100%; padding:10px 14px; border:1px solid #d1d5db; border-radius:10px;
+        background:#e8eaed; font-size:13px; color:#111827; outline:none;
+        transition:border-color .15s,background .15s;
+      }
+      .sc-search-input:focus { border-color:\${accent}; background:#f3f4f6; }
+      .sc-search-input::placeholder { color:#9ca3af; }
+      .sc-faq-list { border-top:1px solid #f3f4f6; }
+      .sc-faq-item { border-bottom:1px solid #f3f4f6; }
+      .sc-faq-q {
+        display:flex; justify-content:space-between; align-items:center;
+        padding:14px 16px; cursor:pointer; gap:10px;
+      }
+      .sc-faq-q-text { font-size:13px; font-weight:500; color:#111827; flex:1; line-height:1.4; }
+      .sc-faq-chevron {
+        width:16px; height:16px; flex-shrink:0; fill:none; stroke:#9ca3af;
+        stroke-width:2.5; stroke-linecap:round; transition:transform .2s;
+      }
+      .sc-faq-item.open .sc-faq-chevron { transform:rotate(180deg); }
+      .sc-faq-a {
+        padding:0 16px 14px; font-size:13px; color:#6b7280; line-height:1.6;
+        display:none;
+      }
+      .sc-faq-item.open .sc-faq-a { display:block; }
+      .sc-help-cta {
+        padding:20px 16px; background:#f9fafb; border-top:1px solid #f3f4f6;
+        text-align:center;
+      }
+      .sc-help-cta p { font-size:13px; color:#6b7280; margin:0 0 12px; }
     \`;
 
     var style = document.createElement('style');
@@ -492,10 +576,8 @@ router.get("/widget.js", (_req, res): void => {
           var which = tab.getAttribute('data-sc-tab');
           if (which === active) return;
           if (which === 'home') showWelcome();
-          else if (which === 'messages') {
-            if (conversationId) { loadConversation(function(msgs) { showThread(msgs, cachedVisitorName); startPolling(); }); }
-            else showForm();
-          }
+          else if (which === 'messages') showMessages();
+          else if (which === 'help') showHelp();
         });
       });
     }
@@ -591,6 +673,105 @@ router.get("/widget.js", (_req, res): void => {
       bindTabs('home');
     }
 
+    // ── Messages list screen ──────────────────────────────────────────────
+    function showMessages() {
+      panel.classList.remove('sc-chat-mode');
+      var convHtml = conversationId
+        ? '<div class="sc-conv-row" id="sc-open-thread-btn">' +
+            '<div class="sc-conv-row-av">' + initials(cachedVisitorName || 'You') + '</div>' +
+            '<div class="sc-conv-row-info">' +
+              '<div class="sc-conv-row-name">' + (cachedVisitorName || 'You') + '</div>' +
+              '<div class="sc-conv-row-preview">' + t.tapToContinue + '</div>' +
+            '</div>' +
+            '<svg class="sc-conv-row-time" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>' +
+          '</div>' +
+          '<div class="sc-list-cta"><button class="sc-new-conv-btn" id="sc-new-list-btn">' +
+            '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
+            t.startNew +
+          '</button></div>'
+        : '<div class="sc-conv-empty">' +
+            '<div class="sc-conv-empty-icon">💬</div>' +
+            '<div class="sc-conv-empty-text">' + (lang==='pt'?'Ainda não tem conversas.':'No conversations yet.') + '</div>' +
+            '<button class="sc-new-conv-btn" id="sc-new-list-btn">' +
+              '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
+              t.startBtn +
+            '</button>' +
+          '</div>';
+      panel.innerHTML =
+        '<div id="sc-chat-hdr">' +
+          '<span class="sc-top-name" style="font-size:16px;font-weight:700;">' + t.tabMessages + '</span>' +
+          '<div class="sc-ml">' + closeBtn() + '</div>' +
+        '</div>' +
+        '<div id="sc-msg-list-body">' + convHtml + '</div>' +
+        tabsHtml('messages');
+      panel.querySelector('.sc-ml .sc-icon-btn').onclick = closePanel;
+      if (conversationId) {
+        document.getElementById('sc-open-thread-btn').addEventListener('click', function() {
+          loadConversation(function(msgs) { showThread(msgs, cachedVisitorName); startPolling(); });
+        });
+      }
+      var newBtn = document.getElementById('sc-new-list-btn');
+      if (newBtn) newBtn.addEventListener('click', function() {
+        if (conversationId) {
+          clearStorage();
+          conversationId = null; cachedVisitorName = null; lastMessageTime = null; shownMessageIds = {};
+          if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+        }
+        showForm();
+      });
+      bindTabs('messages');
+    }
+
+    // ── Help screen ───────────────────────────────────────────────────────
+    function showHelp() {
+      panel.classList.remove('sc-chat-mode');
+      var isPt = lang === 'pt';
+      var faqs = [
+        { q: isPt?'Como posso contactar o suporte?':'How can I contact support?',
+          a: isPt?'Envie-nos uma mensagem no separador Mensagens e respondemos brevemente.':'Send us a message via the Messages tab and we\'ll get back to you shortly.' },
+        { q: isPt?'Quanto tempo demora a resposta?':'How quickly do you reply?',
+          a: isPt?'Normalmente respondemos em minutos durante o horário de atendimento.':'We typically reply within minutes during business hours.' },
+        { q: isPt?'Como posso iniciar uma conversa?':'How do I start a conversation?',
+          a: isPt?'Clique em "Iniciar conversa" ou vá ao separador Mensagens.':'Click "Start a Conversation" or go to the Messages tab.' },
+        { q: isPt?'Posso enviar o meu número de telefone?':'Can I leave my phone number?',
+          a: isPt?'Sim! Pode incluir o seu número no formulário de contacto.':'Yes! You can include your phone number in the contact form.' },
+      ];
+      var faqHtml = faqs.map(function(f) {
+        return '<div class="sc-faq-item">' +
+          '<div class="sc-faq-q">' +
+            '<span class="sc-faq-q-text">' + f.q + '</span>' +
+            '<svg class="sc-faq-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>' +
+          '</div>' +
+          '<div class="sc-faq-a">' + f.a + '</div>' +
+        '</div>';
+      }).join('');
+      panel.innerHTML =
+        '<div id="sc-chat-hdr">' +
+          '<span class="sc-top-name" style="font-size:16px;font-weight:700;">' + t.tabHelp + '</span>' +
+          '<div class="sc-ml">' + closeBtn() + '</div>' +
+        '</div>' +
+        '<div id="sc-help-body">' +
+          '<div class="sc-search-wrap">' +
+            '<input class="sc-search-input" placeholder="' + (isPt?'Pesquisar ajuda...':'Search for help...') + '" />' +
+          '</div>' +
+          '<div class="sc-faq-list">' + faqHtml + '</div>' +
+          '<div class="sc-help-cta">' +
+            '<p>' + (isPt?'Ainda precisa de ajuda?':'Still need help?') + '</p>' +
+            '<button class="sc-new-conv-btn" id="sc-help-msg-btn">' +
+              '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
+              (isPt?'Enviar mensagem':'Send us a message') +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+        tabsHtml('help');
+      panel.querySelectorAll('.sc-faq-q').forEach(function(q) {
+        q.addEventListener('click', function() { q.parentElement.classList.toggle('open'); });
+      });
+      panel.querySelector('.sc-ml .sc-icon-btn').onclick = closePanel;
+      document.getElementById('sc-help-msg-btn').addEventListener('click', showForm);
+      bindTabs('help');
+    }
+
     // ── Form screen ───────────────────────────────────────────────────────
     function showForm() {
       panel.classList.add('sc-chat-mode');
@@ -659,7 +840,20 @@ router.get("/widget.js", (_req, res): void => {
       panel.querySelector('.sc-ml .sc-icon-btn').onclick = closePanel;
 
       var container = document.getElementById('sc-messages');
-      messages.forEach(function(m) { appendMessage(container, m, vName); });
+      var lastDateLabel = null;
+      messages.forEach(function(m) {
+        try {
+          var dLabel = new Date(m.createdAt).toLocaleDateString(lang==='pt'?'pt-PT':'en-GB',{day:'numeric',month:'long',year:'numeric'});
+          if (dLabel !== lastDateLabel) {
+            var sep = document.createElement('div');
+            sep.className = 'sc-date-sep';
+            sep.innerHTML = '<span>' + dLabel + '</span>';
+            container.appendChild(sep);
+            lastDateLabel = dLabel;
+          }
+        } catch(e) {}
+        appendMessage(container, m, vName);
+      });
 
       var replyInput = document.getElementById('sc-reply-input');
       var replySend  = document.getElementById('sc-reply-send');
