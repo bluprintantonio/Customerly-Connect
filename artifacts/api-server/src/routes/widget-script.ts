@@ -39,13 +39,13 @@ router.get("/widget.js", (_req, res): void => {
     });
 
   function init(cfg) {
-    var accentRaw = cfg.color     || config.getAttribute('data-color')      || '#1a56db';
-    var agentName = cfg.agentName || config.getAttribute('data-agent-name') || 'Support';
-    var greeting  = cfg.greeting  || config.getAttribute('data-greeting')   || 'Hi there! How can we help you today?';
-    var posAttr   = cfg.position  || config.getAttribute('data-position')   || 'right';
+    var accentRaw = cfg.color     || '#1a56db';
+    var agentName = cfg.agentName || 'Support';
+    var greeting  = cfg.greeting  || 'Hi there! How can we help you today?';
+    var posAttr   = cfg.position  || 'right';
     var isLeft    = posAttr === 'left';
-    var lang      = cfg.lang      || config.getAttribute('data-lang')       || 'en';
-    var logoUrl   = cfg.logoUrl   || config.getAttribute('data-logo-url')   || '';
+    var lang      = cfg.lang      || 'en';
+    var logoUrl   = cfg.logoUrl   || '';
 
     var T = {
       en: {
@@ -159,9 +159,12 @@ router.get("/widget.js", (_req, res): void => {
 
       /* Generic close / back buttons */
       .sc-icon-btn {
-        width:32px; height:32px; border-radius:50%; border:none; cursor:pointer;
-        background:\${overlay}; display:flex; align-items:center; justify-content:center;
-        color:\${ink}; transition:background .15s;
+        width:32px !important; height:32px !important; min-width:0 !important; max-width:none !important;
+        min-height:0 !important; max-height:none !important;
+        border-radius:50% !important; border:none !important; cursor:pointer !important;
+        padding:0 !important; margin:0 !important; box-sizing:border-box !important; line-height:1 !important;
+        background:\${overlay} !important; display:flex !important; align-items:center !important; justify-content:center !important;
+        color:\${ink} !important; transition:background .15s !important;
       }
       .sc-icon-btn:hover { background:\${overlayHov}; }
       .sc-icon-btn svg { width:15px; height:15px; stroke:\${ink}; fill:none; stroke-width:2.5; stroke-linecap:round; }
