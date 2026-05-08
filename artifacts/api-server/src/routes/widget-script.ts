@@ -315,27 +315,28 @@ router.get("/widget.js", (_req, res): void => {
       .sc-msg-row.visitor .sc-bub-wrap { align-items:flex-end; }
       .sc-bub-text {
         padding:9px 13px; border-radius:16px; border-bottom-left-radius:4px;
-        font-size:13px; line-height:1.5; word-wrap:break-word; color:#111827; background:#f3f4f6;
+        font-size:13px; line-height:1.5; word-wrap:break-word; color:#111827;
+        background:#e8eaed; border:1px solid #d1d5db;
       }
       .sc-msg-row.visitor .sc-bub-text {
         background:linear-gradient(135deg,\${accent},\${accentDark}); color:white;
-        border-bottom-left-radius:16px; border-bottom-right-radius:4px;
+        border-bottom-left-radius:16px; border-bottom-right-radius:4px; border:none;
       }
       .sc-bub-time { font-size:10px; color:#9ca3af; margin-top:3px; padding:0 2px; }
       .sc-msg-row.visitor .sc-bub-time { text-align:right; }
 
       /* Reply bar */
       #sc-reply-bar {
-        border-top:1px solid #f3f4f6; padding:10px 12px;
+        border-top:2px solid #e5e7eb; padding:10px 12px;
         display:flex; align-items:flex-end; gap:8px; flex-shrink:0; background:white;
       }
       #sc-reply-input {
-        flex:1; border:1.5px solid #e5e7eb; border-radius:20px;
-        padding:9px 14px; font-size:13px; color:#111827; background:#f9fafb;
+        flex:1; border:1.5px solid #d1d5db; border-radius:20px;
+        padding:9px 14px; font-size:13px; color:#111827; background:white;
         outline:none; resize:none; max-height:100px; min-height:38px; line-height:1.4;
-        transition:border-color .15s,background .15s;
+        transition:border-color .15s;
       }
-      #sc-reply-input:focus { border-color:\${accent}; background:white; }
+      #sc-reply-input:focus { border-color:\${accent}; }
       #sc-reply-input::placeholder { color:#9ca3af; }
       #sc-reply-send {
         width:36px; height:36px; border-radius:50%; border:none; flex-shrink:0;
