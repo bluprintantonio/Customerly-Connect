@@ -93,12 +93,16 @@ router.get("/widget.js", (_req, res): void => {
 
       /* Bubble */
       #sc-bubble {
-        position:fixed; bottom:24px; \${isLeft?'left':'right'}:24px; z-index:2147483646;
-        width:56px; height:56px; border-radius:50%;
-        background:linear-gradient(135deg,\${accent},\${accentDark});
-        border:none; cursor:pointer; display:flex; align-items:center; justify-content:center;
-        box-shadow:0 4px 20px rgba(\${accentRgb},.45),0 2px 6px rgba(0,0,0,.15);
-        transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s ease; outline:none;
+        position:fixed !important; bottom:24px !important; \${isLeft?'left':'right'}:24px !important; z-index:2147483646 !important;
+        width:56px !important; height:56px !important; min-width:0 !important; max-width:none !important;
+        min-height:0 !important; max-height:none !important;
+        border-radius:50% !important; padding:0 !important; margin:0 !important;
+        box-sizing:border-box !important; line-height:1 !important;
+        background:linear-gradient(135deg,\${accent},\${accentDark}) !important;
+        border:none !important; cursor:pointer !important; display:flex !important;
+        align-items:center !important; justify-content:center !important;
+        box-shadow:0 4px 20px rgba(\${accentRgb},.45),0 2px 6px rgba(0,0,0,.15) !important;
+        transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s ease !important; outline:none !important;
       }
       #sc-bubble:hover { transform:scale(1.08); box-shadow:0 6px 24px rgba(\${accentRgb},.55),0 2px 8px rgba(0,0,0,.18); }
       #sc-bubble:active { transform:scale(.96); }
