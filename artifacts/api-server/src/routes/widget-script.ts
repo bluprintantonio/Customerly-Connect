@@ -109,18 +109,25 @@ router.get("/widget.js", (_req, res): void => {
         -webkit-appearance:none; appearance:none;
       }
 
+      /* Bubble wrapper — carries the fixed position so the badge can sit outside the clipped button */
+      #sc-bubble-wrap {
+        position:fixed !important; bottom:24px !important; \${isLeft?'left':'right'}:24px !important; z-index:2147483646 !important;
+        width:56px !important; height:56px !important;
+        pointer-events:none !important;
+      }
       /* Bubble */
       #sc-bubble {
-        position:fixed !important; bottom:24px !important; \${isLeft?'left':'right'}:24px !important; z-index:2147483646 !important;
+        position:relative !important;
         width:56px !important; height:56px !important; min-width:0 !important; max-width:none !important;
         min-height:0 !important; max-height:none !important;
         border-radius:50% !important; padding:0 !important; margin:0 !important;
-        box-sizing:border-box !important; line-height:1 !important;
+        box-sizing:border-box !important; line-height:1 !important; overflow:hidden !important;
         background:linear-gradient(135deg,\${accent},\${accentDark}) !important;
         border:none !important; cursor:pointer !important; display:flex !important;
         align-items:center !important; justify-content:center !important;
         box-shadow:0 4px 20px rgba(\${accentRgb},.45),0 2px 6px rgba(0,0,0,.15) !important;
         transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s ease !important; outline:none !important;
+        pointer-events:all !important;
       }
       #sc-bubble:hover { transform:scale(1.08); box-shadow:0 6px 24px rgba(\${accentRgb},.55),0 2px 8px rgba(0,0,0,.18); }
       #sc-bubble:active { transform:scale(.96); }
@@ -142,13 +149,14 @@ router.get("/widget.js", (_req, res): void => {
       #sc-bubble.open .sc-ico-close { opacity:1; transform:scale(1) rotate(0deg); }
       #sc-bubble .sc-ico-close svg { width:22px; height:22px; stroke:white; fill:none; stroke-width:2.5; stroke-linecap:round; }
 
-      /* Badge */
+      /* Badge — sibling of bubble button, positioned relative to the wrapper */
       #sc-badge {
         position:absolute; top:-3px; right:-3px;
         min-width:20px; height:20px; border-radius:10px; padding:0 5px;
         background:#ef4444; border:2px solid white;
         display:none; align-items:center; justify-content:center;
         font-size:10px; font-weight:700; color:white;
+        pointer-events:none; z-index:1;
       }
 
       /* Panel */
@@ -387,14 +395,21 @@ router.get("/widget.js", (_req, res): void => {
     wrap.id = 'sc-wrap';
     document.body.appendChild(wrap);
 
+    var bubbleWrap = document.createElement('div');
+    bubbleWrap.id = 'sc-bubble-wrap';
+    wrap.appendChild(bubbleWrap);
+
     var bubble = document.createElement('button');
     bubble.id = 'sc-bubble';
     bubble.setAttribute('aria-label', 'Open chat');
     bubble.innerHTML =
       '<span class="material-symbols-outlined fv-chat-icon">' + iconStyle + '</span>' +
-      '<div class="sc-ico-close"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></div>' +
-      '<div id="sc-badge"></div>';
-    wrap.appendChild(bubble);
+      '<div class="sc-ico-close"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></div>';
+    bubbleWrap.appendChild(bubble);
+
+    var badge = document.createElement('div');
+    badge.id = 'sc-badge';
+    bubbleWrap.appendChild(badge);
 
     var panel = document.createElement('div');
     panel.id = 'sc-panel';
