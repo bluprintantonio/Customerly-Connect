@@ -52,11 +52,13 @@ router.get("/widget.js", (_req, res): void => {
         hello: 'Hello from', yourConversations: 'Your Conversations',
         startBtn: 'Start a Conversation', repliesIn: 'Typically replies in minutes',
         online: 'Online', tabHome: 'Home', tabMessages: 'Messages', tabHelp: 'Help',
+        tapToContinue: 'Continue your conversation', startNew: 'Start a new conversation',
       },
       pt: {
         hello: 'Olá de', yourConversations: 'As suas conversas',
         startBtn: 'Iniciar conversa', repliesIn: 'Normalmente responde em minutos',
         online: 'Online', tabHome: 'Início', tabMessages: 'Mensagens', tabHelp: 'Ajuda',
+        tapToContinue: 'Continuar a conversa', startNew: 'Nova conversa',
       },
     };
     var t = T[lang] || T['en'];
@@ -316,6 +318,29 @@ router.get("/widget.js", (_req, res): void => {
       .sc-typing span:nth-child(2) { animation-delay:.15s; }
       .sc-typing span:nth-child(3) { animation-delay:.3s; }
       @keyframes sc-bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
+
+      /* Existing conversation item */
+      .sc-conv-item {
+        display:flex; align-items:center; gap:10px;
+        padding:10px 16px 4px; cursor:pointer; transition:background .15s;
+      }
+      .sc-conv-item:hover { background:#f9fafb; }
+      .sc-conv-av {
+        width:36px; height:36px; border-radius:50%; flex-shrink:0;
+        background:linear-gradient(135deg,\${accent},\${accentDark});
+        display:flex; align-items:center; justify-content:center;
+        font-size:12px; font-weight:700; color:white;
+      }
+      .sc-conv-info { flex:1; min-width:0; }
+      .sc-conv-name { font-size:13px; font-weight:600; color:#111827; }
+      .sc-conv-sub  { font-size:12px; color:#6b7280; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .sc-new-link {
+        display:block; width:100%; padding:8px 16px 12px;
+        border:none; background:none; cursor:pointer;
+        font-size:12px; color:#6b7280; text-align:center; text-decoration:underline;
+        transition:color .15s;
+      }
+      .sc-new-link:hover { color:#374151; }
     \`;
 
     var style = document.createElement('style');
@@ -359,6 +384,30 @@ router.get("/widget.js", (_req, res): void => {
     var shownMessageIds  = {};
     var cachedVisitorName = null;
 
+    // ── Storage ───────────────────────────────────────────────────────────
+    var STORAGE_KEY = 'sc_' + apiKey;
+    function saveToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          cid: conversationId, name: cachedVisitorName, t: lastMessageTime,
+        }));
+      } catch(e) {}
+    }
+    function loadFromStorage() {
+      try { var r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : null; } catch(e) { return null; }
+    }
+    function clearStorage() {
+      try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+    }
+
+    // Restore previous session
+    var _stored = loadFromStorage();
+    if (_stored && _stored.cid) {
+      conversationId    = _stored.cid;
+      cachedVisitorName = _stored.name;
+      lastMessageTime   = _stored.t;
+    }
+
     function initials(name) {
       return (name || '?').split(' ').slice(0,2).map(function(w){ return w[0]||''; }).join('').toUpperCase() || '?';
     }
@@ -399,7 +448,10 @@ router.get("/widget.js", (_req, res): void => {
           var which = tab.getAttribute('data-sc-tab');
           if (which === active) return;
           if (which === 'home') showWelcome();
-          else if (which === 'messages') { if (conversationId) showThread([], cachedVisitorName); else showForm(); }
+          else if (which === 'messages') {
+            if (conversationId) { loadConversation(function(msgs) { showThread(msgs, cachedVisitorName); startPolling(); }); }
+            else showForm();
+          }
         });
       });
     }
@@ -419,21 +471,40 @@ router.get("/widget.js", (_req, res): void => {
       return '<img src="' + logoUrl + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block">';
     }
 
+    // ── Load conversation from server ──────────────────────────────────────
+    function loadConversation(cb) {
+      fetch(apiBase + '/widget/conversations/' + conversationId + '/messages')
+        .then(function(r) { return r.ok ? r.json() : []; })
+        .catch(function() { return []; })
+        .then(function(msgs) {
+          if (msgs && msgs.length) lastMessageTime = msgs[msgs.length - 1].createdAt;
+          cb(msgs || []);
+        });
+    }
+
     // ── Home screen ───────────────────────────────────────────────────────
     function showWelcome() {
       panel.classList.remove('sc-chat-mode');
-      panel.innerHTML = \`
-        <div id="sc-handle"></div>
-        <div id="sc-topbar">
-          <div class="sc-top-logo">\${logoInner()}</div>
-          \${closeBtn('sc-close-btn')}
-        </div>
-        <div id="sc-hero">
-          <h2>\${t.hello} \${agentName} 👋</h2>
-          <p>\${greeting}</p>
-        </div>
-        <div id="sc-cards">
-          <div class="sc-card">
+      var cardHtml = conversationId
+        ? \`<div class="sc-card">
+            <div class="sc-card-header">
+              <span class="sc-card-title">\${t.yourConversations}</span>
+              <div class="sc-av-stack">
+                <div class="sc-mini-av sc-mini-av-a">\${initials(agentName)}</div>
+                <div class="sc-mini-av sc-mini-av-v">😊</div>
+              </div>
+            </div>
+            <div class="sc-conv-item" id="sc-resume-btn">
+              <div class="sc-conv-av">\${initials(cachedVisitorName || agentName)}</div>
+              <div class="sc-conv-info">
+                <div class="sc-conv-name">\${cachedVisitorName || 'You'}</div>
+                <div class="sc-conv-sub">\${t.tapToContinue}</div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+            <button class="sc-new-link" id="sc-new-btn">\${t.startNew}</button>
+          </div>\`
+        : \`<div class="sc-card">
             <div class="sc-card-header">
               <span class="sc-card-title">\${t.yourConversations}</span>
               <div class="sc-av-stack">
@@ -445,12 +516,34 @@ router.get("/widget.js", (_req, res): void => {
               <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
               \${t.startBtn}
             </button>
-          </div>
+          </div>\`;
+      panel.innerHTML = \`
+        <div id="sc-handle"></div>
+        <div id="sc-topbar">
+          <div class="sc-top-logo">\${logoInner()}</div>
+          \${closeBtn('sc-close-btn')}
         </div>
+        <div id="sc-hero">
+          <h2>\${t.hello} \${agentName} 👋</h2>
+          <p>\${greeting}</p>
+        </div>
+        <div id="sc-cards">\${cardHtml}</div>
         \${tabsHtml('home')}
       \`;
       panel.querySelector('.sc-close-btn').onclick = closePanel;
-      document.getElementById('sc-start-btn').addEventListener('click', showForm);
+      if (conversationId) {
+        document.getElementById('sc-resume-btn').addEventListener('click', function() {
+          loadConversation(function(msgs) { showThread(msgs, cachedVisitorName); startPolling(); });
+        });
+        document.getElementById('sc-new-btn').addEventListener('click', function() {
+          clearStorage();
+          conversationId = null; cachedVisitorName = null; lastMessageTime = null; shownMessageIds = {};
+          if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+          showForm();
+        });
+      } else {
+        document.getElementById('sc-start-btn').addEventListener('click', showForm);
+      }
       bindTabs('home');
     }
 
@@ -499,6 +592,7 @@ router.get("/widget.js", (_req, res): void => {
     function showThread(messages, visitorName) {
       var vName = visitorName || cachedVisitorName || 'You';
       cachedVisitorName = vName;
+      shownMessageIds = {};
       panel.classList.add('sc-chat-mode');
       panel.innerHTML = \`
         <div id="sc-chat-hdr">
@@ -579,6 +673,7 @@ router.get("/widget.js", (_req, res): void => {
       .then(function(data) {
         conversationId  = data.conversationId;
         lastMessageTime = data.message.createdAt;
+        saveToStorage();
         showThread([data.message], name);
         startPolling();
       })
@@ -602,6 +697,7 @@ router.get("/widget.js", (_req, res): void => {
       .then(function(r) { return r.json(); })
       .then(function(m) {
         lastMessageTime = m.createdAt;
+        saveToStorage();
         var container = document.getElementById('sc-messages');
         if (container) appendMessage(container, m, vName);
       });
@@ -639,7 +735,11 @@ router.get("/widget.js", (_req, res): void => {
       panel.classList.add('open');
       var badge = document.getElementById('sc-badge');
       if (badge) badge.style.display = 'none';
-      if (!conversationId) showWelcome();
+      if (conversationId) {
+        loadConversation(function(msgs) { showThread(msgs, cachedVisitorName); startPolling(); });
+      } else {
+        showWelcome();
+      }
     }
 
     function closePanel() {
