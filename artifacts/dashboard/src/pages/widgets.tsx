@@ -17,12 +17,23 @@ const PRESET_COLORS = [
   "#ea580c", "#0891b2", "#be185d", "#854d0e", "#374151",
 ];
 
+const ICON_OPTIONS = [
+  { value: "chat",            label: "Chat",            hint: "Classic speech bubble" },
+  { value: "quick_reply",     label: "Quick Reply",     hint: "Fast reply arrow" },
+  { value: "send",            label: "Send",            hint: "Paper plane" },
+  { value: "contact_support", label: "Support",         hint: "Headset / help agent" },
+  { value: "co_present",      label: "Present",         hint: "Two people" },
+  { value: "info",            label: "Info",            hint: "Information circle" },
+  { value: "bolt",            label: "Bolt",            hint: "Lightning bolt" },
+];
+
 function AppearanceSection({ widget }: {
-  widget: { id: number; color: string | null; logoUrl: string | null; agentName: string | null; greeting: string | null; position: string | null; lang: string | null }
+  widget: { id: number; color: string | null; logoUrl: string | null; iconStyle: string | null; agentName: string | null; greeting: string | null; position: string | null; lang: string | null }
 }) {
   const [open, setOpen] = useState(false);
   const [color, setColor] = useState(widget.color ?? "#1a56db");
   const [logoUrl, setLogoUrl] = useState(widget.logoUrl ?? "");
+  const [iconStyle, setIconStyle] = useState(widget.iconStyle ?? "chat");
   const [agentName, setAgentName] = useState(widget.agentName ?? "");
   const [greeting, setGreeting] = useState(widget.greeting ?? "");
   const [position, setPosition] = useState(widget.position ?? "right");
@@ -48,6 +59,7 @@ function AppearanceSection({ widget }: {
       data: {
         color: color || null,
         logoUrl: logoUrl || null,
+        iconStyle: iconStyle || null,
         agentName: agentName || null,
         greeting: greeting || null,
         position: (position as "left" | "right") || null,
@@ -73,6 +85,40 @@ function AppearanceSection({ widget }: {
 
       {open && (
         <div className="mt-4 space-y-4">
+
+          {/* Icon style */}
+          <div className="space-y-2">
+            <Label className="text-xs">Bubble Icon</Label>
+            <div className="grid grid-cols-2 gap-1.5">
+              {ICON_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setIconStyle(opt.value)}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all text-left",
+                    iconStyle === opt.value
+                      ? "border-primary bg-primary/5 text-primary"
+                      : "border-border bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                  )}
+                >
+                  <span
+                    className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[10px] font-bold"
+                    style={{ background: iconStyle === opt.value ? color : "#94a3b8" }}
+                  >
+                    {opt.label[0]}
+                  </span>
+                  <div>
+                    <div>{opt.label}</div>
+                    <div className="text-[10px] font-normal opacity-60">{opt.hint}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Selected: <span className="font-mono text-foreground">{iconStyle}</span> — visible in the floating chat bubble.
+            </p>
+          </div>
 
           {/* Color */}
           <div className="space-y-2">
@@ -534,7 +580,7 @@ export default function Widgets() {
                     </pre>
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-1.5">
-                    Settings (color, logo, language) are loaded automatically from the server — no need to update this code.
+                    Settings (color, logo, icon, language) are loaded automatically from the server — no need to update this code.
                   </p>
                 </div>
 

@@ -13,6 +13,8 @@ export interface ConversationDetail {
   visitorName: string;
   /** @nullable */
   visitorEmail: string | null;
+  /** @nullable */
+  visitorPhone: string | null;
   siteUrl: string;
   status: ConversationDetailStatus;
   /** @nullable */

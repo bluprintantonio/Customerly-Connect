@@ -39,13 +39,14 @@ router.get("/widget.js", (_req, res): void => {
     });
 
   function init(cfg) {
-    var accentRaw = cfg.color     || '#1a56db';
-    var agentName = cfg.agentName || 'Support';
-    var greeting  = cfg.greeting  || 'Hi there! How can we help you today?';
-    var posAttr   = cfg.position  || 'right';
-    var isLeft    = posAttr === 'left';
-    var lang      = cfg.lang      || 'en';
-    var logoUrl   = cfg.logoUrl   || '';
+    var accentRaw  = cfg.color     || '#1a56db';
+    var agentName  = cfg.agentName || 'Support';
+    var greeting   = cfg.greeting  || 'Hi there! How can we help you today?';
+    var posAttr    = cfg.position  || 'right';
+    var isLeft     = posAttr === 'left';
+    var lang       = cfg.lang      || 'en';
+    var logoUrl    = cfg.logoUrl   || '';
+    var iconStyle  = cfg.iconStyle || 'chat';
 
     var T = {
       en: {
@@ -53,12 +54,20 @@ router.get("/widget.js", (_req, res): void => {
         startBtn: 'Start a Conversation', repliesIn: 'Typically replies in minutes',
         online: 'Online', tabHome: 'Home', tabMessages: 'Messages', tabHelp: 'Help',
         tapToContinue: 'Continue your conversation', startNew: 'Start a new conversation',
+        nameLabel: 'Your name', namePlaceholder: 'Maria Santos',
+        phoneLabel: 'Phone number', phonePlaceholder: '+351 912 345 678',
+        msgLabel: 'Message', msgPlaceholder: 'How can we help?',
+        sendBtn: 'Send message',
       },
       pt: {
         hello: 'Olá de', yourConversations: 'As suas conversas',
         startBtn: 'Iniciar conversa', repliesIn: 'Normalmente responde em minutos',
         online: 'Online', tabHome: 'Início', tabMessages: 'Mensagens', tabHelp: 'Ajuda',
         tapToContinue: 'Continuar a conversa', startNew: 'Nova conversa',
+        nameLabel: 'O seu nome', namePlaceholder: 'Maria Santos',
+        phoneLabel: 'Número de telefone', phonePlaceholder: '+351 912 345 678',
+        msgLabel: 'Mensagem', msgPlaceholder: 'Como podemos ajudar?',
+        sendBtn: 'Enviar mensagem',
       },
     };
     var t = T[lang] || T['en'];
@@ -245,7 +254,6 @@ router.get("/widget.js", (_req, res): void => {
       .sc-chat-status { font-size:11px; color:#6b7280; display:flex; align-items:center; gap:4px; margin-top:1px; }
       .sc-dot { width:6px; height:6px; border-radius:50%; background:#4ade80; flex-shrink:0; }
       #sc-chat-hdr .sc-ml { margin-left:auto; }
-      /* chat mode icon-btn overrides to use neutral */
       #sc-panel.sc-chat-mode .sc-icon-btn { background:#f3f4f6; }
       #sc-panel.sc-chat-mode .sc-icon-btn:hover { background:#e5e7eb; }
       #sc-panel.sc-chat-mode .sc-icon-btn svg { stroke:#374151; }
@@ -369,7 +377,7 @@ router.get("/widget.js", (_req, res): void => {
       var iconLink = document.createElement('link');
       iconLink.rel = 'stylesheet';
       iconLink.setAttribute('data-sc-icons', '1');
-      iconLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=bolt_boost';
+      iconLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=bolt,chat,co_present,contact_support,info,quick_reply,send&display=block';
       document.head.appendChild(iconLink);
     }
 
@@ -381,11 +389,10 @@ router.get("/widget.js", (_req, res): void => {
     var bubble = document.createElement('button');
     bubble.id = 'sc-bubble';
     bubble.setAttribute('aria-label', 'Open chat');
-    bubble.innerHTML = \`
-      <span class="material-symbols-outlined fv-chat-icon">bolt_boost</span>
-      <div class="sc-ico-close"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
-      <div id="sc-badge"></div>
-    \`;
+    bubble.innerHTML =
+      '<span class="material-symbols-outlined fv-chat-icon">' + iconStyle + '</span>' +
+      '<div class="sc-ico-close"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></div>' +
+      '<div id="sc-badge"></div>';
     wrap.appendChild(bubble);
 
     var panel = document.createElement('div');
@@ -475,10 +482,10 @@ router.get("/widget.js", (_req, res): void => {
     }
 
     function closeBtn(extraClass) {
-      return \`<button class="sc-icon-btn \${extraClass||''}" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M13 1L1 13M1 1l12 12"/></svg></button>\`;
+      return '<button class="sc-icon-btn ' + (extraClass||'') + '" aria-label="Close"><svg viewBox="0 0 14 14"><path d="M13 1L1 13M1 1l12 12"/></svg></button>';
     }
     function backBtn() {
-      return \`<button class="sc-icon-btn" id="sc-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg></button>\`;
+      return '<button class="sc-icon-btn" id="sc-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg></button>';
     }
     function logoInner() {
       if (!logoUrl) return initials(agentName);
@@ -504,50 +511,49 @@ router.get("/widget.js", (_req, res): void => {
     function showWelcome() {
       panel.classList.remove('sc-chat-mode');
       var cardHtml = conversationId
-        ? \`<div class="sc-card">
-            <div class="sc-card-header">
-              <span class="sc-card-title">\${t.yourConversations}</span>
-              <div class="sc-av-stack">
-                <div class="sc-mini-av sc-mini-av-a">\${initials(agentName)}</div>
-                <div class="sc-mini-av sc-mini-av-v">😊</div>
-              </div>
-            </div>
-            <div class="sc-conv-item" id="sc-resume-btn">
-              <div class="sc-conv-av">\${initials(cachedVisitorName || agentName)}</div>
-              <div class="sc-conv-info">
-                <div class="sc-conv-name">\${cachedVisitorName || 'You'}</div>
-                <div class="sc-conv-sub">\${t.tapToContinue}</div>
-              </div>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-            </div>
-            <button class="sc-new-link" id="sc-new-btn">\${t.startNew}</button>
-          </div>\`
-        : \`<div class="sc-card">
-            <div class="sc-card-header">
-              <span class="sc-card-title">\${t.yourConversations}</span>
-              <div class="sc-av-stack">
-                <div class="sc-mini-av sc-mini-av-a">\${initials(agentName)}</div>
-                <div class="sc-mini-av sc-mini-av-v">😊</div>
-              </div>
-            </div>
-            <button class="sc-start-card-btn" id="sc-start-btn">
-              <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-              \${t.startBtn}
-            </button>
-          </div>\`;
-      panel.innerHTML = \`
-        <div id="sc-handle"></div>
-        <div id="sc-topbar">
-          <div class="sc-top-logo">\${logoInner()}</div>
-          \${closeBtn('sc-close-btn')}
-        </div>
-        <div id="sc-hero">
-          <h2>\${t.hello} \${agentName} 👋</h2>
-          <p>\${greeting}</p>
-        </div>
-        <div id="sc-cards">\${cardHtml}</div>
-        \${tabsHtml('home')}
-      \`;
+        ? '<div class="sc-card">' +
+            '<div class="sc-card-header">' +
+              '<span class="sc-card-title">' + t.yourConversations + '</span>' +
+              '<div class="sc-av-stack">' +
+                '<div class="sc-mini-av sc-mini-av-a">' + initials(agentName) + '</div>' +
+                '<div class="sc-mini-av sc-mini-av-v">😊</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="sc-conv-item" id="sc-resume-btn">' +
+              '<div class="sc-conv-av">' + initials(cachedVisitorName || agentName) + '</div>' +
+              '<div class="sc-conv-info">' +
+                '<div class="sc-conv-name">' + (cachedVisitorName || 'You') + '</div>' +
+                '<div class="sc-conv-sub">' + t.tapToContinue + '</div>' +
+              '</div>' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>' +
+            '</div>' +
+            '<button class="sc-new-link" id="sc-new-btn">' + t.startNew + '</button>' +
+          '</div>'
+        : '<div class="sc-card">' +
+            '<div class="sc-card-header">' +
+              '<span class="sc-card-title">' + t.yourConversations + '</span>' +
+              '<div class="sc-av-stack">' +
+                '<div class="sc-mini-av sc-mini-av-a">' + initials(agentName) + '</div>' +
+                '<div class="sc-mini-av sc-mini-av-v">😊</div>' +
+              '</div>' +
+            '</div>' +
+            '<button class="sc-start-card-btn" id="sc-start-btn">' +
+              '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
+              t.startBtn +
+            '</button>' +
+          '</div>';
+      panel.innerHTML =
+        '<div id="sc-handle"></div>' +
+        '<div id="sc-topbar">' +
+          '<div class="sc-top-logo">' + logoInner() + '</div>' +
+          closeBtn('sc-close-btn') +
+        '</div>' +
+        '<div id="sc-hero">' +
+          '<h2>' + t.hello + ' ' + agentName + ' 👋</h2>' +
+          '<p>' + greeting + '</p>' +
+        '</div>' +
+        '<div id="sc-cards">' + cardHtml + '</div>' +
+        tabsHtml('home');
       panel.querySelector('.sc-close-btn').onclick = closePanel;
       if (conversationId) {
         document.getElementById('sc-resume-btn').addEventListener('click', function() {
@@ -568,38 +574,37 @@ router.get("/widget.js", (_req, res): void => {
     // ── Form screen ───────────────────────────────────────────────────────
     function showForm() {
       panel.classList.add('sc-chat-mode');
-      panel.innerHTML = \`
-        <div id="sc-chat-hdr">
-          \${backBtn()}
-          <div class="sc-chat-av">\${chatAvInner()}</div>
-          <div>
-            <div class="sc-chat-name">\${agentName}</div>
-            <div class="sc-chat-status"><span class="sc-dot"></span>\${t.repliesIn}</div>
-          </div>
-          <div class="sc-ml">\${closeBtn()}</div>
-        </div>
-        <div id="sc-form-wrap">
-          <form id="sc-form" autocomplete="on">
-            <div class="sc-field">
-              <label for="sc-name">Your name</label>
-              <input id="sc-name" name="name" placeholder="Maria Santos" required autocomplete="name" />
-            </div>
-            <div class="sc-field">
-              <label for="sc-email">Email <span style="font-weight:400;text-transform:none;color:#9ca3af">(optional)</span></label>
-              <input id="sc-email" name="email" type="email" placeholder="maria@email.com" autocomplete="email" />
-            </div>
-            <div class="sc-field">
-              <label for="sc-msg">Message</label>
-              <textarea id="sc-msg" name="message" placeholder="How can we help?" required></textarea>
-            </div>
-            <button type="submit" id="sc-send-btn">
-              <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-              Send message
-            </button>
-          </form>
-        </div>
-        \${tabsHtml('messages')}
-      \`;
+      panel.innerHTML =
+        '<div id="sc-chat-hdr">' +
+          backBtn() +
+          '<div class="sc-chat-av">' + chatAvInner() + '</div>' +
+          '<div>' +
+            '<div class="sc-chat-name">' + agentName + '</div>' +
+            '<div class="sc-chat-status"><span class="sc-dot"></span>' + t.repliesIn + '</div>' +
+          '</div>' +
+          '<div class="sc-ml">' + closeBtn() + '</div>' +
+        '</div>' +
+        '<div id="sc-form-wrap">' +
+          '<form id="sc-form" autocomplete="on">' +
+            '<div class="sc-field">' +
+              '<label for="sc-name">' + t.nameLabel + '</label>' +
+              '<input id="sc-name" name="name" placeholder="' + t.namePlaceholder + '" required autocomplete="name" />' +
+            '</div>' +
+            '<div class="sc-field">' +
+              '<label for="sc-phone">' + t.phoneLabel + '</label>' +
+              '<input id="sc-phone" name="phone" type="tel" placeholder="' + t.phonePlaceholder + '" autocomplete="tel" />' +
+            '</div>' +
+            '<div class="sc-field">' +
+              '<label for="sc-msg">' + t.msgLabel + '</label>' +
+              '<textarea id="sc-msg" name="message" placeholder="' + t.msgPlaceholder + '" required></textarea>' +
+            '</div>' +
+            '<button type="submit" id="sc-send-btn">' +
+              '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
+              t.sendBtn +
+            '</button>' +
+          '</form>' +
+        '</div>' +
+        tabsHtml('messages');
       document.getElementById('sc-back').addEventListener('click', showWelcome);
       panel.querySelector('.sc-ml .sc-icon-btn').onclick = closePanel;
       document.getElementById('sc-form').addEventListener('submit', function(e) { e.preventDefault(); startConversation(); });
@@ -612,25 +617,24 @@ router.get("/widget.js", (_req, res): void => {
       cachedVisitorName = vName;
       shownMessageIds = {};
       panel.classList.add('sc-chat-mode');
-      panel.innerHTML = \`
-        <div id="sc-chat-hdr">
-          \${backBtn()}
-          <div class="sc-chat-av">\${chatAvInner()}</div>
-          <div>
-            <div class="sc-chat-name">\${agentName}</div>
-            <div class="sc-chat-status"><span class="sc-dot"></span>\${t.online}</div>
-          </div>
-          <div class="sc-ml">\${closeBtn()}</div>
-        </div>
-        <div id="sc-messages"></div>
-        <div id="sc-reply-bar">
-          <textarea id="sc-reply-input" placeholder="Type a message…" rows="1"></textarea>
-          <button id="sc-reply-send" aria-label="Send">
-            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-          </button>
-        </div>
-        \${tabsHtml('messages')}
-      \`;
+      panel.innerHTML =
+        '<div id="sc-chat-hdr">' +
+          backBtn() +
+          '<div class="sc-chat-av">' + chatAvInner() + '</div>' +
+          '<div>' +
+            '<div class="sc-chat-name">' + agentName + '</div>' +
+            '<div class="sc-chat-status"><span class="sc-dot"></span>' + t.online + '</div>' +
+          '</div>' +
+          '<div class="sc-ml">' + closeBtn() + '</div>' +
+        '</div>' +
+        '<div id="sc-messages"></div>' +
+        '<div id="sc-reply-bar">' +
+          '<textarea id="sc-reply-input" placeholder="Type a message…" rows="1"></textarea>' +
+          '<button id="sc-reply-send" aria-label="Send">' +
+            '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>' +
+          '</button>' +
+        '</div>' +
+        tabsHtml('messages');
       document.getElementById('sc-back').addEventListener('click', showWelcome);
       panel.querySelector('.sc-ml .sc-icon-btn').onclick = closePanel;
 
@@ -656,12 +660,11 @@ router.get("/widget.js", (_req, res): void => {
       var row = document.createElement('div');
       row.className = 'sc-msg-row ' + m.sender;
       var avHtml = m.sender === 'agent' ? '<div class="sc-msg-av">' + initials(agentName) + '</div>' : '';
-      row.innerHTML = avHtml + \`
-        <div class="sc-bub-wrap">
-          <div class="sc-bub-text">\${escHtml(m.content)}</div>
-          <div class="sc-bub-time">\${timeLabel(m.createdAt)}</div>
-        </div>
-      \`;
+      row.innerHTML = avHtml +
+        '<div class="sc-bub-wrap">' +
+          '<div class="sc-bub-text">' + escHtml(m.content) + '</div>' +
+          '<div class="sc-bub-time">' + timeLabel(m.createdAt) + '</div>' +
+        '</div>';
       container.appendChild(row);
       container.scrollTop = container.scrollHeight;
     }
@@ -673,7 +676,7 @@ router.get("/widget.js", (_req, res): void => {
     // ── Start conversation ────────────────────────────────────────────────
     function startConversation() {
       var name  = (document.getElementById('sc-name').value  || '').trim();
-      var email = (document.getElementById('sc-email').value || '').trim();
+      var phone = (document.getElementById('sc-phone').value || '').trim();
       var msg   = (document.getElementById('sc-msg').value   || '').trim();
       if (!name || !msg) return;
       cachedVisitorName = name;
@@ -685,7 +688,7 @@ router.get("/widget.js", (_req, res): void => {
       fetch(apiBase + '/widget/conversations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ visitorName: name, visitorEmail: email || null, siteUrl: window.location.hostname, apiKey: apiKey, initialMessage: msg })
+        body: JSON.stringify({ visitorName: name, visitorPhone: phone || null, siteUrl: window.location.hostname, apiKey: apiKey, initialMessage: msg })
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
@@ -697,7 +700,7 @@ router.get("/widget.js", (_req, res): void => {
       })
       .catch(function() {
         btn.classList.remove('loading');
-        btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> Send message';
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> ' + t.sendBtn;
       });
     }
 

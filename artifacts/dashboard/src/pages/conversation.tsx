@@ -7,7 +7,7 @@ import {
   useUpdateConversation
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, Send, CheckCircle, ExternalLink } from "lucide-react";
+import { ChevronLeft, Send, CheckCircle, ExternalLink, Phone } from "lucide-react";
 import { formatMessageTime, getInitials } from "@/lib/format";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,6 @@ export default function Conversation() {
     mutation: {
       onSuccess: (newMessage) => {
         setDraft("");
-        // Optimistic cache update
         queryClient.setQueryData(getGetConversationQueryKey(id), (old: any) => {
           if (!old) return old;
           return {
@@ -61,7 +60,6 @@ export default function Conversation() {
     }
   });
 
-  // Mark as read when opening
   useEffect(() => {
     if (conversation?.unread) {
       updateMutation.mutate({ id, data: { unread: false } });
@@ -123,7 +121,18 @@ export default function Conversation() {
           
           <div>
             <h2 className="font-semibold text-base leading-tight">{conversation.visitorName}</h2>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+              {conversation.visitorPhone && (
+                <a
+                  href={`tel:${conversation.visitorPhone}`}
+                  className="hover:text-primary transition-colors flex items-center gap-1"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Phone className="h-3 w-3" />
+                  {conversation.visitorPhone}
+                </a>
+              )}
+              {conversation.visitorPhone && <span className="text-border">·</span>}
               <a href={conversation.siteUrl} target="_blank" rel="noreferrer" className="hover:text-primary transition-colors flex items-center gap-1">
                 {conversation.siteUrl.replace(/^https?:\/\//, '')}
                 <ExternalLink className="h-3 w-3" />

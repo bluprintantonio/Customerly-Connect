@@ -1,0 +1,120 @@
+I want to improve the widget admin UI and public chat widget configuration.
+
+Goal:
+Create a UI where I can customize the chat widget appearance per company/project.
+
+Required features:
+
+1. Icon style selector
+Add an option in the widget settings UI to choose the floating bubble icon style using Google Material Symbols from:
+- quick_reply
+- bolt
+- chat
+- info
+- co_present
+- contact_support
+- send
+
+Use Google Material Symbols:
+https://fonts.google.com/icons
+
+The selected icon should be used in the floating chat bubble.
+
+2. Color customization
+Add an editable appearance color field.
+
+Defaults:
+- Azimute: #2fb6fa
+- Fontainhas: #b5c99a
+
+The color should control:
+- floating button background
+- widget header gradient
+- main CTA buttons
+- visitor message bubbles
+- selected/accent UI elements
+
+Allow manual editing of the color value.
+
+3. Company logo upload
+Add “Company Logo” upload field in the widget settings UI.
+
+The uploaded logo should be displayed in the chat widget header instead of, or alongside, the text/avatar initials.
+
+If no logo is uploaded, fallback to current initials/avatar behavior.
+
+4. User/visitor avatar option
+Add support to display a user/visitor avatar if available.
+
+If no visitor avatar exists, fallback to initials or default icon.
+
+5. Replace email with phone number
+In the start conversation form, replace the email field with phone number.
+
+Current form:
+- name
+- email optional
+- message
+
+New form:
+- name
+- phone number
+- message
+
+Phone number should be saved with the conversation.
+
+6. Inbox display
+Update the inbox/admin conversation view to show the visitor phone number clearly.
+
+Show phone number:
+- in conversation list preview/details
+- in conversation detail/header
+- searchable/filterable if possible
+
+7. Backend/database
+Update schema/API as needed:
+- store phone number on conversation or visitor record
+- keep backward compatibility with existing conversations that may have email
+- do not break existing widget keys
+- do not break existing conversations
+
+8. Public embed/widget behavior
+The public widget should read configuration dynamically from widget settings:
+- selected icon
+- accent color
+- company logo
+- agent/company name
+- greeting text
+
+Keep existing embed snippet working:
+<script src="https://customerly-connect.replit.app/api/widget.js" data-widget-key="..."></script>
+
+But allow optional overrides through data attributes:
+- data-color
+- data-agent-name
+- data-greeting
+- data-icon
+- data-logo-url
+
+9. Compatibility
+Keep these global methods working:
+- customerly.open()
+- customerly.close()
+- customerly.show()
+- customerly.hide()
+- SimpleChat.open()
+- SimpleChat.close()
+- SimpleChat.toggle()
+
+10. Quality requirements
+- no duplicate widgets
+- no broken open/close animation
+- unread badge still works
+- Material Symbols icon must not render as plain text
+- mobile responsive
+- existing Azimute and Fontainhas widgets must continue working
+
+Please implement this carefully and tell me:
+- which files were changed
+- whether a database migration is required
+- the final embed snippets for Azimute and Fontainhas

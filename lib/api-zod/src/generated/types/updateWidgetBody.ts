@@ -22,6 +22,8 @@ export interface UpdateWidgetBody {
   /** @nullable */
   logoUrl?: string | null;
   /** @nullable */
+  iconStyle?: string | null;
+  /** @nullable */
   webhookUrl?: string | null;
   /** @nullable */
   webhookSecret?: string | null;

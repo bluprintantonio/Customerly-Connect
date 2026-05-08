@@ -26,6 +26,8 @@ export interface Conversation {
   visitorName: string;
   /** @nullable */
   visitorEmail: string | null;
+  /** @nullable */
+  visitorPhone: string | null;
   siteUrl: string;
   status: ConversationStatus;
   /** @nullable */
@@ -63,6 +65,8 @@ export interface ConversationDetail {
   visitorName: string;
   /** @nullable */
   visitorEmail: string | null;
+  /** @nullable */
+  visitorPhone: string | null;
   siteUrl: string;
   status: ConversationDetailStatus;
   /** @nullable */
@@ -127,6 +131,8 @@ export interface Widget {
   /** @nullable */
   logoUrl: string | null;
   /** @nullable */
+  iconStyle: string | null;
+  /** @nullable */
   webhookUrl: string | null;
   /** @nullable */
   webhookSecret: string | null;
@@ -142,6 +148,8 @@ export interface WidgetStartConversationBody {
   visitorName: string;
   /** @nullable */
   visitorEmail?: string | null;
+  /** @nullable */
+  visitorPhone?: string | null;
   siteUrl: string;
   apiKey: string;
   initialMessage: string;
@@ -173,6 +181,8 @@ export interface UpdateWidgetBody {
   lang?: string | null;
   /** @nullable */
   logoUrl?: string | null;
+  /** @nullable */
+  iconStyle?: string | null;
   /** @nullable */
   webhookUrl?: string | null;
   /** @nullable */

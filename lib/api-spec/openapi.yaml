@@ -396,6 +396,8 @@ components:
           type: string
         visitorEmail:
           type: ["string", "null"]
+        visitorPhone:
+          type: ["string", "null"]
         siteUrl:
           type: string
         status:
@@ -413,6 +415,7 @@ components:
         - id
         - visitorName
         - visitorEmail
+        - visitorPhone
         - siteUrl
         - status
         - lastMessageAt
@@ -428,6 +431,8 @@ components:
         visitorName:
           type: string
         visitorEmail:
+          type: ["string", "null"]
+        visitorPhone:
           type: ["string", "null"]
         siteUrl:
           type: string
@@ -450,6 +455,7 @@ components:
         - id
         - visitorName
         - visitorEmail
+        - visitorPhone
         - siteUrl
         - status
         - lastMessageAt
@@ -537,6 +543,8 @@ components:
           type: ["string", "null"]
         logoUrl:
           type: ["string", "null"]
+        iconStyle:
+          type: ["string", "null"]
         webhookUrl:
           type: ["string", "null"]
         webhookSecret:
@@ -554,6 +562,7 @@ components:
         - position
         - lang
         - logoUrl
+        - iconStyle
         - webhookUrl
         - webhookSecret
         - createdAt
@@ -575,6 +584,8 @@ components:
         visitorName:
           type: string
         visitorEmail:
+          type: ["string", "null"]
+        visitorPhone:
           type: ["string", "null"]
         siteUrl:
           type: string
@@ -605,6 +616,8 @@ components:
         lang:
           type: ["string", "null"]
         logoUrl:
+          type: ["string", "null"]
+        iconStyle:
           type: ["string", "null"]
         webhookUrl:
           type: ["string", "null"]

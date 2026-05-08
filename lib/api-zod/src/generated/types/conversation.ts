@@ -12,6 +12,8 @@ export interface Conversation {
   visitorName: string;
   /** @nullable */
   visitorEmail: string | null;
+  /** @nullable */
+  visitorPhone: string | null;
   siteUrl: string;
   status: ConversationStatus;
   /** @nullable */

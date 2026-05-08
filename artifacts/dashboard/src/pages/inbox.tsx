@@ -4,6 +4,7 @@ import { formatMessageTime, getInitials } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { Phone } from "lucide-react";
 
 export default function Inbox() {
   const { data: conversations, isLoading } = useListConversations({ status: "all" });
@@ -79,10 +80,16 @@ export default function Inbox() {
                       {formatMessageTime(conv.lastMessageAt || conv.createdAt)}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     {conv.status === "closed" && (
                       <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground uppercase tracking-wider">
                         Closed
+                      </span>
+                    )}
+                    {conv.visitorPhone && (
+                      <span className="shrink-0 inline-flex items-center gap-1 text-xs text-muted-foreground">
+                        <Phone className="h-3 w-3" />
+                        {conv.visitorPhone}
                       </span>
                     )}
                     <span className={cn(

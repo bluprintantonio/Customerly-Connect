@@ -25,6 +25,8 @@ export interface Widget {
   /** @nullable */
   logoUrl: string | null;
   /** @nullable */
+  iconStyle: string | null;
+  /** @nullable */
   webhookUrl: string | null;
   /** @nullable */
   webhookSecret: string | null;

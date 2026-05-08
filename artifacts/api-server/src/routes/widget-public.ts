@@ -27,6 +27,7 @@ router.get("/widget/config", async (req, res): Promise<void> => {
       position: widgetsTable.position,
       lang: widgetsTable.lang,
       logoUrl: widgetsTable.logoUrl,
+      iconStyle: widgetsTable.iconStyle,
     })
     .from(widgetsTable)
     .where(eq(widgetsTable.apiKey, key));
@@ -61,6 +62,7 @@ router.post("/widget/conversations", async (req, res): Promise<void> => {
     .values({
       visitorName: body.data.visitorName,
       visitorEmail: body.data.visitorEmail ?? null,
+      visitorPhone: body.data.visitorPhone ?? null,
       siteUrl: body.data.siteUrl,
       status: "open",
       unread: true,
@@ -77,12 +79,12 @@ router.post("/widget/conversations", async (req, res): Promise<void> => {
     })
     .returning();
 
-  // Fire webhook + Twilio notification in background (don't block the response)
   const payload = {
     event: "new_message",
     conversationId: conversation.id,
     visitorName: conversation.visitorName,
     visitorEmail: conversation.visitorEmail,
+    visitorPhone: conversation.visitorPhone,
     siteUrl: conversation.siteUrl,
     message: {
       id: message.id,
@@ -176,7 +178,6 @@ router.post("/widget/conversations/:id/messages", async (req, res): Promise<void
     .set({ lastMessageAt: new Date(), unread: true })
     .where(eq(conversationsTable.id, params.data.id));
 
-  // Look up widget for this conversation to get webhook config
   const [widget] = await db
     .select()
     .from(widgetsTable)
@@ -187,6 +188,7 @@ router.post("/widget/conversations/:id/messages", async (req, res): Promise<void
     conversationId: conversation.id,
     visitorName: conversation.visitorName,
     visitorEmail: conversation.visitorEmail,
+    visitorPhone: conversation.visitorPhone,
     siteUrl: conversation.siteUrl,
     message: {
       id: message.id,

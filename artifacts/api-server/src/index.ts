@@ -19,14 +19,19 @@ if (Number.isNaN(port) || port <= 0) {
 async function migrate() {
   await pool.query(`
     ALTER TABLE widgets
-      ADD COLUMN IF NOT EXISTS agent_name text,
-      ADD COLUMN IF NOT EXISTS greeting   text,
-      ADD COLUMN IF NOT EXISTS color      text,
-      ADD COLUMN IF NOT EXISTS position   text,
-      ADD COLUMN IF NOT EXISTS lang       text,
-      ADD COLUMN IF NOT EXISTS logo_url   text
+      ADD COLUMN IF NOT EXISTS agent_name  text,
+      ADD COLUMN IF NOT EXISTS greeting    text,
+      ADD COLUMN IF NOT EXISTS color       text,
+      ADD COLUMN IF NOT EXISTS position    text,
+      ADD COLUMN IF NOT EXISTS lang        text,
+      ADD COLUMN IF NOT EXISTS logo_url    text,
+      ADD COLUMN IF NOT EXISTS icon_style  text
   `);
-  logger.info("DB migration: widgets columns ensured");
+  await pool.query(`
+    ALTER TABLE conversations
+      ADD COLUMN IF NOT EXISTS visitor_phone text
+  `);
+  logger.info("DB migration: columns ensured");
 }
 
 migrate()

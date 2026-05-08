@@ -10,6 +10,8 @@ export interface WidgetStartConversationBody {
   visitorName: string;
   /** @nullable */
   visitorEmail?: string | null;
+  /** @nullable */
+  visitorPhone?: string | null;
   siteUrl: string;
   apiKey: string;
   initialMessage: string;

@@ -6,6 +6,7 @@ export const conversationsTable = pgTable("conversations", {
   id: serial("id").primaryKey(),
   visitorName: text("visitor_name").notNull(),
   visitorEmail: text("visitor_email"),
+  visitorPhone: text("visitor_phone"),
   siteUrl: text("site_url").notNull(),
   status: text("status").notNull().default("open"),
   unread: boolean("unread").notNull().default(true),
