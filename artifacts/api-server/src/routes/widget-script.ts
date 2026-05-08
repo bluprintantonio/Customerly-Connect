@@ -272,11 +272,11 @@ router.get("/widget.js", (_req, res): void => {
       .sc-field { display:flex; flex-direction:column; gap:4px; margin-bottom:9px; }
       .sc-field label { font-size:11px; font-weight:600; color:#374151; letter-spacing:.3px; text-transform:uppercase; }
       .sc-field input, .sc-field textarea {
-        border:1.5px solid #e5e7eb; border-radius:9px; padding:9px 12px;
-        font-size:13px; color:#111827; background:#f9fafb; outline:none; width:100%; resize:none;
+        border:1px solid #d1d5db; border-radius:9px; padding:9px 12px;
+        font-size:13px; color:#111827; background:#e8eaed; outline:none; width:100%; resize:none;
         transition:border-color .15s,background .15s;
       }
-      .sc-field input:focus, .sc-field textarea:focus { border-color:\${accent}; background:white; }
+      .sc-field input:focus, .sc-field textarea:focus { border-color:\${accent}; background:#f3f4f6; }
       .sc-field textarea { height:72px; }
       .sc-field input::placeholder, .sc-field textarea::placeholder { color:#9ca3af; }
       #sc-send-btn {
