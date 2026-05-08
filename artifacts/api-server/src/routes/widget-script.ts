@@ -776,7 +776,7 @@ router.get("/widget.js", (_req, res): void => {
       if (conversationId) {
         loadConversation(function(msgs) { showThread(msgs, cachedVisitorName); startPolling(); });
       } else {
-        showWelcome();
+        showForm();
       }
     }
 
