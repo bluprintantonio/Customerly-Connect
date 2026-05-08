@@ -728,7 +728,7 @@ router.get("/widget.js", (_req, res): void => {
       var isPt = lang === 'pt';
       var faqs = [
         { q: isPt?'Como posso contactar o suporte?':'How can I contact support?',
-          a: isPt?'Envie-nos uma mensagem no separador Mensagens e respondemos brevemente.':'Send us a message via the Messages tab and we\'ll get back to you shortly.' },
+          a: isPt?'Envie-nos uma mensagem no separador Mensagens e respondemos brevemente.':'Send us a message via the Messages tab and we will get back to you shortly.' },
         { q: isPt?'Quanto tempo demora a resposta?':'How quickly do you reply?',
           a: isPt?'Normalmente respondemos em minutos durante o horário de atendimento.':'We typically reply within minutes during business hours.' },
         { q: isPt?'Como posso iniciar uma conversa?':'How do I start a conversation?',
