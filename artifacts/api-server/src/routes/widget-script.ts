@@ -89,7 +89,16 @@ router.get("/widget.js", (_req, res): void => {
     // ── Styles ───────────────────────────────────────────────────────────
     var css = \`
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-      #sc-wrap * { box-sizing:border-box; font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+      #sc-wrap, #sc-wrap * {
+        box-sizing:border-box !important;
+        font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif !important;
+        line-height:normal !important;
+      }
+      #sc-wrap input, #sc-wrap textarea, #sc-wrap button, #sc-wrap a {
+        font-size:inherit; color:inherit; background:none; border:none;
+        padding:0; margin:0; outline:none; text-decoration:none;
+        -webkit-appearance:none; appearance:none;
+      }
 
       /* Bubble */
       #sc-bubble {
@@ -196,13 +205,14 @@ router.get("/widget.js", (_req, res): void => {
 
       /* Start button */
       .sc-start-card-btn {
-        display:flex; align-items:center; justify-content:center; gap:8px;
-        width:calc(100% - 32px); margin:0 16px 14px; padding:12px;
-        border-radius:12px; border:none;
-        background:linear-gradient(135deg,\${accent},\${accentDark});
-        color:white; font-size:13px; font-weight:600; cursor:pointer;
-        box-shadow:0 2px 10px rgba(\${accentRgb},.35);
-        transition:opacity .15s,transform .1s;
+        display:flex !important; align-items:center !important; justify-content:center !important; gap:8px !important;
+        width:calc(100% - 32px) !important; max-width:calc(100% - 32px) !important;
+        margin:0 16px 14px !important; padding:12px !important;
+        border-radius:12px !important; border:none !important;
+        background:linear-gradient(135deg,\${accent},\${accentDark}) !important;
+        color:white !important; font-size:13px !important; font-weight:600 !important; cursor:pointer !important;
+        box-shadow:0 2px 10px rgba(\${accentRgb},.35) !important;
+        transition:opacity .15s,transform .1s !important;
       }
       .sc-start-card-btn:hover { opacity:.92; }
       .sc-start-card-btn:active { transform:scale(.98); }
