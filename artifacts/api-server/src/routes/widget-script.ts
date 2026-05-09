@@ -975,11 +975,7 @@ router.get("/widget.js", (_req, res): void => {
       panel.classList.add('open');
       var badge = document.getElementById('sc-badge');
       if (badge) badge.style.display = 'none';
-      if (conversationId) {
-        loadConversation(function(msgs) { showThread(msgs, cachedVisitorName); startPolling(); });
-      } else {
-        showForm();
-      }
+      showWelcome();
     }
 
     function closePanel() {
